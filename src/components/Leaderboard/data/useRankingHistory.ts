@@ -6,8 +6,6 @@ import { useAddressWithPrefixSuffix } from 'hooks/useAddressWithPrefixSuffix';
 export const useRankingHistory = (seasonId: string) => {
   const address = useAddressWithPrefixSuffix();
   return useSWR<IRankingHistoryResult | undefined>([seasonId, address, 'getRankingSeasonHis'], async () => {
-    console.log(seasonId, address);
-
     const { getRankingHistory } =
       (await graphQLRequest<{
         getRankingHistory: IRankingHistoryResult;
