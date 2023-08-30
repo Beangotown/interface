@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRankingSeasonList } from '../data/useRankingSeasonList';
-import { useRankingSeasonHis } from '../data/useRankingSeasonHis';
+import { useRankingHistory } from '../data/useRankingHistory';
 import { useIsMobile } from 'redux/selector/mobile';
 import { getDateFormat } from 'utils/getDateFormat';
-import { IRankingSeasonHistoryResult } from '../data/types';
+import { IRankingHistoryResult } from '../data/types';
 
 const DiagonalContainer = ({ icon, leftText, value }: { icon: React.ReactNode; leftText: string; value?: number }) => {
   const isMobile = useIsMobile();
@@ -27,7 +27,7 @@ const formatDate = (dateStr: string) => getDateFormat(dateStr, 'yyyy.M.d');
 export const PastRecordContent = () => {
   const { data } = useRankingSeasonList();
   const [selectedSeason, setSelectedSeason] = useState('');
-  const { data: his } = useRankingSeasonHis(selectedSeason);
+  const { data: his } = useRankingHistory(selectedSeason);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -91,7 +91,7 @@ export const PastRecordContent = () => {
 };
 
 interface IData {
-  his?: IRankingSeasonHistoryResult;
+  his?: IRankingHistoryResult;
 }
 
 const Table = ({ his }: IData) => {

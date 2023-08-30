@@ -5,9 +5,8 @@ import { useWeeklyRank } from '../components/Leaderboard/data/useWeeklyRank';
 import { useEffect } from 'react';
 import { storybookStore } from '../../.storybook/preview';
 import { useSeasonRank } from '../components/Leaderboard/data/useSeasonRank';
-import { add } from 'date-fns';
 import { useRankingSeasonList } from '../components/Leaderboard/data/useRankingSeasonList';
-import { useRankingSeasonHis } from '../components/Leaderboard/data/useRankingSeasonHis';
+import { useRankingHistory } from '../components/Leaderboard/data/useRankingHistory';
 
 const meta: Meta<typeof Leaderboard> = {
   title: 'BeangoTown/Leaderboard',
@@ -36,7 +35,7 @@ export const NoData: Story = {
       const { mutate: weekly } = useWeeklyRank();
       const { mutate: season } = useSeasonRank();
       const { mutate: list } = useRankingSeasonList();
-      const { mutate: his } = useRankingSeasonHis('11');
+      const { mutate: his } = useRankingHistory('11');
 
       useEffect(() => {
         weekly(undefined, { revalidate: false });
@@ -87,7 +86,7 @@ export const WithData: Story = {
       const { mutate: weekly } = useWeeklyRank();
       const { mutate: season } = useSeasonRank();
       const { mutate: list } = useRankingSeasonList();
-      const { mutate: his } = useRankingSeasonHis('11');
+      const { mutate: his } = useRankingHistory('11');
 
       const mockDate = new Date().toISOString().slice(0, 10) + `T09:30:00`;
 

@@ -13,7 +13,7 @@ interface IWeekItem extends IRankItem {
   week: string;
 }
 
-export interface IRankingSeasonHistoryResult {
+export interface IRankingHistoryResult {
   season: IRankItem;
   weeks: IWeekItem[];
 }

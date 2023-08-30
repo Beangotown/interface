@@ -3,7 +3,7 @@ import { GameRecord } from '../components/GameRecord';
 import { toggleShowGameRecord } from '../redux/reducer/info';
 import { useEffect } from 'react';
 import { storybookStore } from '../../.storybook/preview';
-import { useGameHis } from '../components/GameRecord/data/useGameHis';
+import { useGameHistory } from '../components/GameRecord/data/useGameHistory';
 import { uniqueId } from 'lodash';
 
 const meta: Meta<typeof GameRecord> = {
@@ -41,7 +41,7 @@ export const WithData: Story = {
       const { records } = context.args as {
         records: number;
       };
-      const { mutate: his } = useGameHis();
+      const { mutate: his } = useGameHistory();
 
       useEffect(() => {
         his(

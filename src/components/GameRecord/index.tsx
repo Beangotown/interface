@@ -1,5 +1,5 @@
 import { GameRecordItem } from './components/GameRecordItem';
-import { useGameHis } from './data/useGameHis';
+import { useGameHistory } from './data/useGameHistory';
 import { useIsMobile } from 'redux/selector/mobile';
 import { dispatch, useSelector } from 'redux/store';
 import { toggleShowGameRecord } from 'redux/reducer/info';
@@ -9,7 +9,7 @@ import { MAX_GAME_RECORD_ITEMS } from 'constants/platform';
 export const GameRecord = () => {
   const open = useSelector((state) => state.info.showGameRecord);
   const isMobile = useIsMobile();
-  const { data } = useGameHis();
+  const { data } = useGameHistory();
 
   return (
     <GameRecordModal

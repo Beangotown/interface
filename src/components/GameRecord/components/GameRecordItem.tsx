@@ -1,5 +1,5 @@
 import { Disclosure } from '@headlessui/react';
-import { IGameItem, ITransactionInfo } from '../data/useGameHis';
+import { IGameItem, ITransactionInfo } from '../data/useGameHistory';
 import { copyText } from 'utils/copyText';
 import { middleEllipsis } from 'utils/middleEllipsis';
 import { useIsMobile } from 'redux/selector/mobile';
