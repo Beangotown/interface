@@ -6,5 +6,5 @@ import { NetworkType, PortkeyProvider } from '@portkey/did-ui-react';
 import { store } from 'redux/store';
 
 export default ({ children }: { children: React.ReactNode }) => {
-  return <PortkeyProvider networkType={'MAIN'}>{children}</PortkeyProvider>;
+  return <PortkeyProvider networkType={'TESTNET'}>{children}</PortkeyProvider>;
 };
