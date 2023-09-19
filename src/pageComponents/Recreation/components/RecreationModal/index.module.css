@@ -1,8 +1,8 @@
 .recreation-modal {
-  @apply flex items-center justify-center overflow-hidden !w-[100vw] !max-w-[100vw] h-[100vh] top-0 !m-0 !p-0 z-[1001];
+  @apply flex items-center justify-center overflow-hidden !w-full !max-w-full h-full top-0 !m-0 !p-0 z-[1001];
 
   :global(.ant-modal-content) {
-    @apply !bg-transparent !shadow-none;
+    @apply w-full !bg-transparent !shadow-none;
   }
 }
 

@@ -72,7 +72,7 @@ function RecreationModal(props: IRecreationModal) {
 
   const modalContent: Record<RecreationModalType, ReactElement | null> = {
     [RecreationModalType.DICE]: (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center mt-[-80px]">
         <Lottie
           lottieRef={diceAnimationRef}
           loop={false}
@@ -81,21 +81,21 @@ function RecreationModal(props: IRecreationModal) {
           onComplete={() => {
             onClose && onClose();
           }}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-auto w-[80%]'}`}
+          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] w-auto'}`}
         />
       </div>
     ),
     [RecreationModalType.LOADING]: (
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative w-full h-full flex items-center justify-center mt-[-80px]">
         <Lottie
           loop={true}
           autoplay={true}
           animationData={loadingDice}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-auto w-[80%]'}`}
+          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] w-[auto]'}`}
         />
         <span
-          className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto bottom-[16%] ${
-            isMobile ? 'text-[16px]' : 'text-[42px]'
+          className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto ${
+            isMobile ? 'text-[16px] bottom-0' : 'text-[42px] bottom-[60px]'
           }`}>
           {RANDOM_STEP}
         </span>
