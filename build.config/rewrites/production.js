@@ -1,22 +1,22 @@
 module.exports = [
   {
     source: '/connect/:path*',
-    destination: 'https://auth-portkey.portkey.finance/connect/:path*',
+    destination: 'http://192.168.67.241:8080/connect/:path*',
   },
   {
     source: '/portkey/:path*',
-    destination: 'https://did-portkey.portkey.finance/:path*',
+    destination: 'http://192.168.67.241:5577/:path*',
   },
   {
     source: '/api/:path*',
-    destination: 'https://www.beangotown.com/api/:path*',
+    destination: 'http://192.168.67.234:8100/api/:path*',
   },
   {
     source: '/cms/:path*',
-    destination: 'https://cms.beangotown.com/:path*',
+    destination: 'http://192.168.67.234:8100/:path*',
   },
   {
     source: '/AElfIndexer_BeangoTown/BeangoTownIndexerPluginSchema/:path*',
-    destination: 'https://www.beangotown.com/AElfIndexer_BeangoTown/BeangoTownIndexerPluginSchema/:path*',
+    destination: 'http://192.168.67.234:8100/AElfIndexer_BeangoTown/BeangoTownIndexerPluginSchema/:path*',
   },
 ];
