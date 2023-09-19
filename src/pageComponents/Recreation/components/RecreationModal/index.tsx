@@ -81,7 +81,7 @@ function RecreationModal(props: IRecreationModal) {
           onComplete={() => {
             onClose && onClose();
           }}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] w-auto'}`}
+          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-auto'}`}
         />
       </div>
     ),
@@ -91,7 +91,7 @@ function RecreationModal(props: IRecreationModal) {
           loop={true}
           autoplay={true}
           animationData={loadingDice}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] w-[auto]'}`}
+          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}
         />
         <span
           className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto ${
