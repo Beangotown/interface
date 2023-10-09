@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { SentryMessageType, captureMessage } from 'utils/captureMessage';
 import showMessage from 'utils/setGlobalComponentsInfo';
 
 interface ResponseType<T> {
@@ -35,6 +36,18 @@ class Request {
         }
         if (config.baseURL?.includes('connect')) {
           return res;
+        }
+
+        if (code !== '20000') {
+          captureMessage({
+            type: SentryMessageType.HTTP,
+            params: {
+              name: config.url!,
+              method: config.method!,
+              query: config.data,
+              description: response,
+            },
+          });
         }
 
         switch (code) {
@@ -82,6 +95,15 @@ class Request {
         }
 
         showMessage.error(errMessage);
+        captureMessage({
+          type: SentryMessageType.HTTP,
+          params: {
+            name: config.url!,
+            method: config.method!,
+            query: config.data,
+            description: error,
+          },
+        });
         return Promise.reject(errMessage);
       },
     );
