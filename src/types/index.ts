@@ -113,6 +113,16 @@ export interface IBoutInformation {
   roundNumber: number;
   gridNum: number;
   expectedBlockHeight: number;
+  diceCount: number;
+  diceNumbers: number[];
+  startGridNum: number;
+  endGridNum: number;
+  totalStep: number;
+}
+
+export interface IPlayerProps {
+  resetStart?: boolean;
+  diceCount: number;
 }
 
 export interface IPlayerInformation {

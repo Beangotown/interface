@@ -15,7 +15,16 @@ interface IBoard extends IGoButton {
   onNftClick?: () => void;
 }
 
-function Board({ hasNft, go, status = Status.NONE, playableCount = 0, sumScore = 5, onNftClick }: IBoard) {
+function Board({
+  hasNft,
+  go,
+  status = Status.NONE,
+  playableCount = 0,
+  sumScore = 5,
+  onNftClick,
+  curDiceCount,
+  changeCurDiceCount,
+}: IBoard) {
   const { isMobile, playerInfo } = useGetState();
 
   if (isMobile) {
@@ -54,7 +63,14 @@ function Board({ hasNft, go, status = Status.NONE, playableCount = 0, sumScore =
             onClick={() => onNftClick && onNftClick()}
           />
         </div>
-        <GoButton playableCount={playableCount} sumScore={sumScore} status={status} go={() => go && go()} />
+        <GoButton
+          playableCount={playableCount}
+          sumScore={sumScore}
+          status={status}
+          curDiceCount={curDiceCount}
+          changeCurDiceCount={changeCurDiceCount}
+          go={() => go && go()}
+        />
       </div>
     );
   }

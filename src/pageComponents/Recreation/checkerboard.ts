@@ -49,7 +49,7 @@ export class CheckerboardNode {
 }
 
 export class CheckerboardList {
-  private head: CheckerboardNode | null;
+  head: CheckerboardNode | null;
   private currentNode: CheckerboardNode | null;
   private step: number;
   private baseWidth: number;

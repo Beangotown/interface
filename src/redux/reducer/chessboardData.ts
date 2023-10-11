@@ -8,9 +8,11 @@ const initialState: {
   chessboardData: IChessboardData | undefined;
   resetStart: boolean;
   curChessboardNode?: CheckerboardNode;
+  chessboardTotalStep: number;
 } = {
   chessboardData: undefined,
   resetStart: true,
+  chessboardTotalStep: 0,
 };
 
 // Actual Slice
@@ -27,6 +29,9 @@ export const chessboardDataSlice = createSlice({
     setCurChessboardNode(state, action) {
       state.curChessboardNode = action.payload;
     },
+    setChessboardTotalStep(state, action) {
+      state.chessboardTotalStep = action.payload;
+    },
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
@@ -40,10 +45,12 @@ export const chessboardDataSlice = createSlice({
   },
 });
 
-export const { setChessboardData, setChessboardResetStart, setCurChessboardNode } = chessboardDataSlice.actions;
+export const { setChessboardData, setChessboardResetStart, setCurChessboardNode, setChessboardTotalStep } =
+  chessboardDataSlice.actions;
 export const getChessboardData = (state: AppState) => state.chessboardData.chessboardData?.data;
 export const getImageResources = (state: AppState) => state.chessboardData.chessboardData?.imageResources;
 export const getCurChessboardNode = (state: AppState) => state.chessboardData.curChessboardNode;
 export const getResetStart = (state: AppState) => state.chessboardData.resetStart;
+export const getChessboardTotalStep = (state: AppState) => state.chessboardData.chessboardTotalStep;
 
 export default chessboardDataSlice.reducer;
