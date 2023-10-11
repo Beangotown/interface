@@ -5,6 +5,14 @@ import GoButtonDisabledSvg from 'assets/images/recreation/go-button-disabled.svg
 import GoButtonPcSvg from 'assets/images/recreation/go-button-pc.svg';
 import GoButtonDisabledPcSvg from 'assets/images/recreation/go-button-pc-disabled.svg';
 
+import DiceBtn1 from 'assets/images/diceButton/dice1.svg';
+import diceBtn1Png from '../../../../assets/images/diceButton/dice1.png';
+import DiceBtn2 from 'assets/images/diceButton/dice2.svg';
+import DiceBtn3 from 'assets/images/diceButton/dice3.svg';
+import DiceBtn1Selected from 'assets/images/diceButton/dice1-selected.svg';
+import DiceBtn2Selected from 'assets/images/diceButton/dice1-selected.svg';
+import DiceBtn3Selected from 'assets/images/diceButton/dice1-selected.svg';
+
 import styles from './index.module.css';
 import useGetState from 'redux/state/useGetState';
 
@@ -14,16 +22,46 @@ export enum Status {
   NONE = 'none',
 }
 
+export enum ButtonStatus {
+  DEFAULT = 'default',
+  SELECTED = 'selected',
+}
+
 export interface IGoButton {
   status?: Status;
   hasNft?: boolean;
   playableCount?: number;
   sumScore?: number;
+  curDiceCount?: number;
+  changeCurDiceCount?: (num: number) => void;
   go?: () => void;
 }
 
-function GoButton({ go, status = Status.NONE, playableCount = 0, sumScore = 5 }: IGoButton) {
+function GoButton({
+  go,
+  status = Status.NONE,
+  playableCount = 0,
+  sumScore = 5,
+  curDiceCount,
+  changeCurDiceCount,
+}: IGoButton) {
   const { isMobile } = useGetState();
+  const diceCount = [1, 2, 3];
+
+  const diceButtons: Record<string, Record<ButtonStatus, ReactElement>> = {
+    1: {
+      [ButtonStatus.DEFAULT]: <DiceBtn1 className="w-full h-full" />,
+      [ButtonStatus.SELECTED]: <DiceBtn1Selected className="w-full h-full" />,
+    },
+    2: {
+      [ButtonStatus.DEFAULT]: <DiceBtn2 className="w-full h-full" />,
+      [ButtonStatus.SELECTED]: <DiceBtn2Selected className="w-full h-full" />,
+    },
+    3: {
+      [ButtonStatus.DEFAULT]: <DiceBtn3 className="w-full h-full" />,
+      [ButtonStatus.SELECTED]: <DiceBtn3Selected className="w-full h-full" />,
+    },
+  };
 
   const GoButtonBg: Record<Status, ReactElement> = {
     [Status.NONE]: <GoButtonSvg className="w-full h-full" />,
@@ -78,6 +116,15 @@ function GoButton({ go, status = Status.NONE, playableCount = 0, sumScore = 5 }:
     ),
   };
 
+  const chooseDiceCount = (number: number) => {
+    changeCurDiceCount && changeCurDiceCount(number);
+  };
+
+  const changeDiceCount = () => {
+    const number = ((curDiceCount || 1) % diceCount.length) + 1;
+    changeCurDiceCount && changeCurDiceCount(number);
+  };
+
   return (
     <div
       className={`${styles['button-mobile']} ${
@@ -90,12 +137,33 @@ function GoButton({ go, status = Status.NONE, playableCount = 0, sumScore = 5 }:
         </div>
       )}
 
-      <button
-        className={`${styles['button__icon']} cursor-custom relative flex items-center justify-center`}
-        onClick={() => go && go()}>
-        {isMobile ? GoButtonBg[status] : GoButtonPcBg[status]}
-        <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
-      </button>
+      <div className="relative">
+        {!isMobile && (
+          <div className="flex items-center justify-between mb-[32px]">
+            {diceCount.map((item) => {
+              return (
+                <div
+                  key={item}
+                  className={`${styles['dice-number']} ${curDiceCount === item && styles.active}`}
+                  onClick={() => chooseDiceCount(item)}>
+                  {curDiceCount === item ? diceButtons[item].selected : diceButtons[item].default}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {isMobile && (
+          <div className={styles['dice-number-mobile']} onClick={changeDiceCount}>
+            {curDiceCount}
+          </div>
+        )}
+        <button
+          className={`${styles['button__icon']} cursor-custom relative flex items-center justify-center`}
+          onClick={() => go && go()}>
+          {isMobile ? GoButtonBg[status] : GoButtonPcBg[status]}
+          <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
+        </button>
+      </div>
     </div>
   );
 }

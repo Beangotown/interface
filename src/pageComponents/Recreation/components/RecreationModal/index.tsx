@@ -34,19 +34,19 @@ interface IRecreationModal {
   open: boolean;
   step?: number;
   bean?: number;
+  diceNumbers?: number[];
   type: RecreationModalType;
   onClose?: () => void;
 }
 
 function RecreationModal(props: IRecreationModal) {
-  const { open, step, bean, type, onClose } = props;
+  const { open, step, bean, type, onClose, diceNumbers } = props;
 
   const { isMobile } = useGetState();
   const [treasureStatus, setTreasureStatus] = useState<TreasureStatus>(TreasureStatus.OPENED);
   const [openable, setOpenable] = useState<boolean>(true);
 
   const treasureAnimationRef = useRef<LottieRefCurrentProps | null>(null);
-  const diceAnimationRef = useRef<LottieRefCurrentProps | null>(null);
 
   const dice: Record<string, Record<string, any>> = {
     1: dice1,
@@ -73,16 +73,22 @@ function RecreationModal(props: IRecreationModal) {
   const modalContent: Record<RecreationModalType, ReactElement | null> = {
     [RecreationModalType.DICE]: (
       <div className="w-full h-full flex items-center justify-center mt-[-80px]">
-        <Lottie
-          lottieRef={diceAnimationRef}
-          loop={false}
-          autoplay={true}
-          animationData={dice[`${step}`]}
-          onComplete={() => {
-            onClose && onClose();
-          }}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-auto'}`}
-        />
+        <div>{step}</div>
+        {diceNumbers?.map((item, index) => {
+          return (
+            <Lottie
+              key={index}
+              loop={false}
+              autoplay={true}
+              animationData={dice[`${item}`]}
+              onComplete={() => {
+                index === diceNumbers.length - 1 && onClose && onClose();
+              }}
+              // className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-auto'}`}
+              className="flex-1"
+            />
+          );
+        })}
       </div>
     ),
     [RecreationModalType.LOADING]: (

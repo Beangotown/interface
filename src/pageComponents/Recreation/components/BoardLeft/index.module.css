@@ -1,0 +1,9 @@
+.game__pc__side {
+  @apply relative flex-1 flex justify-center items-center h-full;
+}
+
+.game__pc__blur {
+  @apply absolute z-[20] top-0 left-0 w-full h-full bg-no-repeat bg-[auto_100%];
+
+  filter: blur(10px);
+}

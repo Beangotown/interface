@@ -13,6 +13,9 @@
       background: linear-gradient(270deg, #898694 15.84%, #95919B 53.29%);
     }
   }
+  .dice-number-mobile {
+    @apply w-[50px] h-[50px] bg-gray-500 flex items-center justify-center absolute right-[-50px] z-[51];
+  }
 
   .button__icon {
     @apply relative z-50 w-[128px] h-[106px];
@@ -38,12 +41,25 @@
 }
 
 .button {
-  @apply pb-[78px] mt-0 w-[398px] h-[142px];
+  /* @apply pb-[78px] mt-0 w-[398px] h-[142px]; */
+  @apply pb-[78px] mt-0 w-[398px];
   .button__icon {
     @apply relative z-50 w-[398px] h-[142px];
     svg {
       @apply w-full h-auto;
     }
+  }
+  .dice-number {
+    @apply w-[100px] h-[100px] flex items-center justify-center rounded-[30px] bg-[100%_100%] bg-no-repeat;
+
+    box-shadow: -24px 16px 12px 0 rgb(26.56 11.30 4.43 / 30%);
+    background-image: url('../../../../assets/images/diceButton/dice1.png');
+    background-size: cover;
+
+    /* background-color: transparent; */
+  }
+  .dice-number.active {
+    /* @apply bg-pink-500; */
   }
 }
 

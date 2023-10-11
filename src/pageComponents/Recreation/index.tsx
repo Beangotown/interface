@@ -5,13 +5,7 @@ import Leaderboard from 'components/Leaderboard';
 import PageLoading from 'components/PageLoading';
 import GameRecord from 'components/GameRecord';
 
-import {
-  ArrowDirection,
-  CheckerboardNode,
-  CheckerboardType,
-  ICheckerboardItem,
-  IJumpCallbackParams,
-} from './checkerboard';
+import { CheckerboardNode, CheckerboardType, IJumpCallbackParams } from './checkerboard';
 import { CheckerboardList } from './checkerboard';
 import styles from './index.module.css';
 
@@ -43,10 +37,12 @@ import { store } from 'redux/store';
 import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import roleImg from 'assets/base64/role';
-import { setChessboardResetStart, setCurChessboardNode } from 'redux/reducer/chessboardData';
+import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getBlockHeightFromServer } from 'utils/getBlockHeightFromServer';
 import { getTxResult } from 'utils/getTxResult';
 import { ChainId } from '@portkey/types';
+import { getList } from './utils/getList';
+import BoardRight from './components/BoardRight';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -67,10 +63,10 @@ export default function Game() {
     playerInfo,
     walletType,
     walletInfo,
-    imageResources,
     configInfo,
     chessBoardInfo: checkerboardData,
     resetStart: chessboardResetStart,
+    chessboardTotalStep,
     curChessboardNode,
     needSync,
   } = useGetState();
@@ -90,6 +86,7 @@ export default function Game() {
   const [sumScore] = useState<number>(configInfo!.sumScore);
   const [hasNft, setHasNft] = useState<boolean>(false);
   const [resetStart, setResetStart] = useState<boolean>(true);
+  const [totalStep, setTotalStep] = useState<number>(0);
   const [step, setStep] = useState<number>(0);
 
   const [goLoading, setGoLoading] = useState<boolean>(false);
@@ -109,6 +106,9 @@ export default function Game() {
 
   const [countDownModalOpen, setCountDownModalOpen] = useState(false);
 
+  const [curDiceCount, setCurDiceCount] = useState<number>(1);
+  const [diceNumbers, setDiceNumbers] = useState<number[]>([]);
+
   const translateRef = useRef<{
     x: number;
     y: number;
@@ -125,6 +125,10 @@ export default function Game() {
       }),
     );
     updatePlayerInformation(address);
+  };
+
+  const updateTotalStep = (totalStep: number) => {
+    store.dispatch(setChessboardTotalStep(totalStep));
   };
 
   const updatePosition = ({ x, y, state, currentNode }: IJumpCallbackParams) => {
@@ -148,40 +152,6 @@ export default function Game() {
           }
         }
       }, ANIMATION_DURATION);
-    }
-  };
-
-  const getList = (node: ICheckerboardItem, nodePosition: [number, number]) => {
-    const current = {
-      row: nodePosition[0],
-      column: nodePosition[1],
-      info: node,
-    };
-
-    linkedList.current?.append(current);
-
-    if (node.arrow) {
-      let nextPosition: any = [];
-      switch (node.arrow) {
-        case ArrowDirection.LEFT:
-          nextPosition = [nodePosition[0], nodePosition[1] - 1];
-          break;
-        case ArrowDirection.RIGHT:
-          nextPosition = [nodePosition[0], nodePosition[1] + 1];
-          break;
-        case ArrowDirection.TOP:
-          nextPosition = [nodePosition[0] - 1, nodePosition[1]];
-          break;
-        case ArrowDirection.BOTTOM:
-          nextPosition = [nodePosition[0] + 1, nodePosition[1]];
-          break;
-      }
-
-      if (nextPosition[0] === firstNodePosition[0] && nextPosition[1] === firstNodePosition[1]) {
-        return;
-      } else {
-        getList(checkerboardData![nextPosition[0]][nextPosition[1]], nextPosition);
-      }
     }
   };
 
@@ -218,7 +188,9 @@ export default function Game() {
   const initCheckerboard = () => {
     resetPosition();
     setResetStart(chessboardResetStart);
+    setTotalStep(chessboardTotalStep);
     store.dispatch(setChessboardResetStart(chessboardResetStart));
+    store.dispatch(setChessboardTotalStep(chessboardTotalStep));
     // animationRef.current?.pause();
     translateRef.current = {
       x: document.getElementById('animationId')?.clientWidth || 0,
@@ -234,7 +206,7 @@ export default function Game() {
       linkedList.current.updateCurrentNode(curChessboardNode);
     }
 
-    getList(firstNode, firstNodePosition);
+    getList(firstNode, firstNodePosition, checkerboardData!, linkedList, firstNodePosition);
   };
 
   const updateCheckerboard = () => {
@@ -249,7 +221,6 @@ export default function Game() {
   useDebounce(updateCheckerboard, 500, [width, height]);
 
   const go = async () => {
-    setRoleAnimationDuration(ANIMATION_DURATION);
     if (goStatus !== Status.NONE) {
       if (!hasNft) {
         setBeanPassModalType(GetBeanPassStatus.Need);
@@ -267,7 +238,10 @@ export default function Game() {
       setDiceType(RecreationModalType.LOADING);
       setOpen(true);
       console.log('=====Play resetStart', resetStart);
-      const res = await Play(resetStart);
+      const res = await Play({
+        resetStart,
+        diceCount: curDiceCount,
+      });
       console.log('=====Play res', res);
       if (res?.TransactionId) {
         const boutInformation = await GetBoutInformation(res?.TransactionId);
@@ -276,34 +250,36 @@ export default function Game() {
         setResetStart(false);
         store.dispatch(setChessboardResetStart(false));
 
-        const blockGap = Number(boutInformation.expectedBlockHeight) - res.TxResult.BlockNumber;
-        const waitTime = blockGap * 0.5 - (Date.now() - res.startTime) / 1000;
-        console.log(waitTime, blockGap, res.startTime);
-
-        if (waitTime > 0.1) {
-          await sleep(waitTime * 1000);
+        const bingoRes = await GetBingoReward(res.TransactionId);
+        console.log('=====Play GetBingoReward', bingoRes);
+        const step = bingoRes.gridNum;
+        updateTotalStep(bingoRes.totalStep);
+        setTotalStep(bingoRes.totalStep);
+        if (bingoRes.totalStep - step > totalStep) {
+          const stepDifference = bingoRes.totalStep - step - totalStep;
+          setRoleAnimationDuration(0);
+          for (let index = 0; index < stepDifference; index++) {
+            currentNodeRef.current = currentNodeRef.current?.next || linkedList.current?.head || undefined;
+          }
+          updateCheckerboard();
+          linkedList.current?.updateCurrentNode(currentNodeRef.current || null);
         }
-        const blockRes = await getBlockHeightFromServer(boutInformation.expectedBlockHeight);
-        if (blockRes) {
-          const bingoRes = await GetBingoReward(res.TransactionId);
-          console.log('=====Play GetBingoReward', bingoRes);
-          const step = bingoRes.gridNum;
-          setScore(bingoRes.score);
-          setStep(step);
-          setDiceType(RecreationModalType.DICE);
-          return;
-        }
-      } else {
-        setMoving(false);
-        setGoLoading(false);
+        console.log('=====step jump');
+        setRoleAnimationDuration(ANIMATION_DURATION);
+        setScore(bingoRes.score);
+        setStep(step);
+        setDiceNumbers(bingoRes.diceNumbers);
+        setDiceType(RecreationModalType.DICE);
+        return;
       }
     } catch (error) {
       console.error('=====error', error);
       const resError = error as IContractError;
       showMessage.error(formatErrorMsg(resError).errorMessage?.message);
-      setMoving(false);
-      setGoLoading(false);
     }
+    setMoving(false);
+    setGoLoading(false);
+    updateStep();
     setOpen(false);
   };
 
@@ -420,6 +396,7 @@ export default function Game() {
     showMessage.loading();
 
     setResetStart(chessboardResetStart);
+    setTotalStep(chessboardTotalStep);
     currentNodeRef.current = curChessboardNode;
     if (curChessboardNode) {
       setOpacity(0);
@@ -475,19 +452,14 @@ export default function Game() {
     setTreasureOpen(false);
   };
 
+  const changeCurDiceCount = (num: number) => {
+    setCurDiceCount(num);
+  };
+
   return (
     <>
       <div className={`${styles.game} cursor-custom relative z-[1] ${isMobile && 'flex-col'}`}>
-        {!isMobile && (
-          <div className={styles['game__pc__side']}>
-            <div
-              className={`${styles['game__pc__blur']}`}
-              style={{
-                backgroundImage: `url(${imageResources?.aloginBgPc})`,
-              }}></div>
-            <BoardLeft />
-          </div>
-        )}
+        {!isMobile && <BoardLeft />}
         <div
           className={`${styles['game__content']} flex overflow-hidden ${
             isMobile ? 'w-full flex-1' : 'h-full w-[40%] min-w-[500Px] max-w-[784Px]'
@@ -541,30 +513,32 @@ export default function Game() {
           <SideBorder side="right" />
         </div>
         {!isMobile && (
-          <div className={`${styles['game__pc__side']}`}>
-            <div
-              className={`${styles['game__pc__blur']} ${styles['game__pc__blur__right']}`}
-              style={{
-                backgroundImage: `url(${imageResources?.aloginBgPc})`,
-              }}></div>
-            <div className="z-30 h-full w-full">
-              <Board
-                hasNft={hasNft}
-                onNftClick={onNftClick}
-                playableCount={playableCount}
-                sumScore={hasNft ? sumScore : 0}
-                status={goStatus}
-                go={go}
-              />
-            </div>
-          </div>
+          <BoardRight>
+            <Board
+              hasNft={hasNft}
+              onNftClick={onNftClick}
+              playableCount={playableCount}
+              sumScore={hasNft ? sumScore : 0}
+              status={goStatus}
+              curDiceCount={curDiceCount}
+              changeCurDiceCount={changeCurDiceCount}
+              go={go}
+            />
+          </BoardRight>
         )}
 
         {isMobile && (
-          <GoButton playableCount={playableCount} sumScore={hasNft ? sumScore : 0} status={goStatus} go={go} />
+          <GoButton
+            playableCount={playableCount}
+            sumScore={hasNft ? sumScore : 0}
+            status={goStatus}
+            curDiceCount={curDiceCount}
+            changeCurDiceCount={changeCurDiceCount}
+            go={go}
+          />
         )}
 
-        <RecreationModal open={open} onClose={diceModalOnClose} type={diceType} step={step} />
+        <RecreationModal open={open} onClose={diceModalOnClose} diceNumbers={diceNumbers} type={diceType} step={step} />
         <RecreationModal
           open={treasureOpen}
           onClose={recreationModalOnClose}
