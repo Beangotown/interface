@@ -1,20 +1,14 @@
 .button-mobile {
-  @apply mt-[-41px];
+  @apply mt-0;
 
   .button__border {
-    @apply absolute z-50 top-0 bottom-0 left-0 m-auto w-full h-max pb-[9px];
+    @apply w-full h-[106px] bg-[100%_100%] bg-no-repeat mt-[-41px];
 
-    .button__border__top {
-      @apply w-full h-[18px] shadow-[0_1px_2px_0_#FFF_inset] bg-[#E0DDCB];
-    }
-    .button__border__bottom {
-      @apply w-full h-[6px] shadow-[3px_0_3px_0_#FFFFFF29_inset] bg-[#E0DDCB];
-
-      background: linear-gradient(270deg, #898694 15.84%, #95919b 53.29%);
-    }
+    background-image: url('../../../../assets/images/goButton/go-btn-border.png');
+    background-size: cover;
   }
   .dice-number-mobile {
-    @apply w-[56px] h-[59px] flex justify-center absolute right-[-56px] top-[23.5px] z-[51] bg-[100%_100%] bg-no-repeat;
+    @apply w-[71px] h-[71px] flex justify-center absolute right-[-62px] top-[24px] z-[51] bg-[100%_100%] bg-no-repeat;
 
     background-image: url('../../../../assets/images/diceButton/bg-default-m.png');
     background-size: cover;
@@ -25,11 +19,15 @@
   }
 
   .dice-content-mobile {
-    @apply w-[44px] h-[44px] mt-[-2px];
+    @apply w-[44px] h-[44px] ml-[4px];
+  }
+
+  .dice-content-mobile-press {
+    @apply mt-[8px] mr-[2px];
   }
 
   .button__icon {
-    @apply relative z-50 w-[128px] h-[106px];
+    @apply relative z-50;
 
     .button__icon__loading {
       @apply aspect-[1/1] relative;
@@ -52,7 +50,7 @@
 }
 
 .btn-mobile {
-  @apply bg-[100%_100%] bg-no-repeat bg-contain w-[136px] h-auto z-[50];
+  @apply bg-no-repeat bg-contain w-[150px] h-[120px] z-[50] left-[99px] top-[-6px] absolute;
 
   background-image: url('../../../../assets/images/goButton/bg-go-default-m.png');
 }
@@ -65,7 +63,7 @@
 }
 
 .btn-pc {
-  @apply bg-[100%_100%] bg-no-repeat bg-contain w-[422px] h-auto;
+  @apply bg-[100%_100%] bg-no-repeat bg-cover w-[446px]  h-[170px] ml-[-30px];
 
   background-image: url('../../../../assets/images/goButton/bg-go-default-pc.png');
 }
@@ -84,11 +82,25 @@
 
 .button {
   /* @apply pb-[78px] mt-0 w-[398px] h-[142px]; */
-  @apply pb-[78px] mt-0 w-[398px];
+  @apply pb-[78px] mt-0 flex;
   .button__icon {
-    @apply relative z-50 w-[398px] h-[142px];
+    @apply relative z-50;
     svg {
       @apply w-full h-auto;
+    }
+    .button__icon__loading {
+      @apply aspect-[1/1] relative;
+
+      .button__icon__loading__bounce1,
+      .button__icon__loading__bounce2 {
+        @apply w-full h-full rounded-full bg-[#fff] opacity-[0.6] absolute top-0 left-0;
+
+        animation: loading-bounce 2s infinite ease-in-out;
+      }
+
+      .button__icon__loading__bounce2 {
+        animation-delay: -1s;
+      }
     }
   }
   .dice-number {

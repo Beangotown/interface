@@ -115,20 +115,11 @@ function GoButton({
     const number = ((curDiceCount || 1) % diceCount.length) + 1;
     changeCurDiceCount && changeCurDiceCount(number);
     setCurPress(number);
+    setCurPriceM(number);
   };
 
   return (
-    <div
-      className={`${styles['button-mobile']} ${
-        !isMobile && styles.button
-      } relative flex w-full items-center justify-center pb-[9px]`}>
-      {isMobile && (
-        <div className={styles['button__border']}>
-          <div className={styles['button__border__top']} />
-          <div className={styles['button__border__bottom']} />
-        </div>
-      )}
-
+    <div className={`${styles['button-mobile']} ${!isMobile && styles.button} relative w-full items-center pb-[9px]`}>
       <div className="relative">
         {!isMobile && (
           <div className="flex items-center justify-between mb-[16px] ml-[-24px]">
@@ -158,48 +149,44 @@ function GoButton({
             })}
           </div>
         )}
-        {isMobile && (
-          <div
-            className={`${styles['dice-number-mobile']} ${
-              curDiceCount === curPressM && styles['dice-number-mobile-press']
-            }`}
-            onClick={changeDiceCount}>
-            {/* {curDiceCount}
-             */}
-            <Image
-              src={require(`assets/images/diceButton/dice${curDiceCount}-m.png`)}
-              alt=""
-              className={`${styles['dice-content-mobile']} ${
-                curPressM === curDiceCount && styles['dice-content-press-mobile']
-              }`}
-            />
-          </div>
-        )}
-        {/* <button
-          className={`${styles['button__icon']} cursor-custom relative flex items-center justify-center`}
-          onClick={() => go && go()}>
-          {isMobile ? GoButtonBg[status] : GoButtonPcBg[status]}
-          <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
-        </button> */}
         {isMobile ? (
-          <div
-            onMouseEnter={() => {
-              setMBtnMouseOn(true);
-            }}
-            onMouseLeave={() => {
-              setMBtnMouseOn(false);
-            }}
-            onMouseDown={() => {
-              setMBtnPress(true);
-            }}
-            className={`${styles['btn-mobile']} cursor-custom relative flex items-center justify-center ${
-              mBtnMouseOn && status === Status.NONE && styles['btn-mobile-hover']
-            } ${mBtnPress && status === Status.NONE && styles['btn-mobile-press']} ${
-              status === Status.DISABLED && styles['btn-mobile-disabled']
-            }`}
-            onClick={() => go && go()}>
-            {GoButtonBg[status]}
-            <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
+          <div className={styles['button__border']}>
+            <div
+              onMouseEnter={() => {
+                setMBtnMouseOn(true);
+              }}
+              onMouseLeave={() => {
+                setMBtnMouseOn(false);
+              }}
+              onMouseDown={() => {
+                setMBtnPress(true);
+              }}
+              className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex${
+                mBtnMouseOn && status === Status.NONE && styles['btn-mobile-hover']
+              } ${mBtnPress && status === Status.NONE && styles['btn-mobile-press']} ${
+                status === Status.DISABLED && styles['btn-mobile-disabled']
+              }`}
+              onClick={() => go && go()}>
+              <div
+                className={`${
+                  status === Status.LOADING ? 'top-[12px] left-[10px]' : 'left-[17px] top-0'
+                } absolute  flex flex-col items-center relative justify-center`}>
+                {statusCom[status]}
+              </div>
+              <div
+                className={`${styles['dice-number-mobile']} ${
+                  curDiceCount === curPressM && styles['dice-number-mobile-press']
+                }`}
+                onClick={changeDiceCount}>
+                <Image
+                  src={require(`assets/images/diceButton/dice${curDiceCount}-m.png`)}
+                  alt=""
+                  className={`${styles['dice-content-mobile']} ${
+                    curPressM === curDiceCount && styles['dice-content-mobile-press']
+                  }`}
+                />
+              </div>
+            </div>
           </div>
         ) : (
           <div
@@ -212,13 +199,14 @@ function GoButton({
             onMouseDown={() => {
               setPcBtnPress(true);
             }}
-            className={`${styles['btn-pc']} cursor-custom relative flex items-center justify-center ${
+            className={`${styles['btn-pc']} ${
+              styles['button__icon']
+            } cursor-custom relative flex items-center justify-center ${
               pcBtnMouseOn && status === Status.NONE && styles['btn-pc-hover']
             } ${pcBtnPress && status === Status.NONE && styles['btn-pc-press']} ${
               status === Status.DISABLED && styles['btn-pc-disabled']
             }`}
             onClick={() => go && go()}>
-            {GoButtonPcBg[status]}
             <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
           </div>
         )}
