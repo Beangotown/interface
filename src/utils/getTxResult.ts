@@ -119,6 +119,18 @@ export async function getTxResultRetry({
   try {
     const txResult = await getAElf(rpcUrl).chain.getTxResult(TransactionId);
     if (txResult.error && txResult.errorMessage) {
+      captureMessage({
+        type: SentryMessageType.HTTP,
+        params: {
+          name: 'getTxResultRetry',
+          method: 'get',
+          query: {
+            TransactionId,
+            rpcUrl,
+          },
+          description: txResult,
+        },
+      });
       throw Error(txResult.errorMessage.message || txResult.errorMessage.Message);
     }
 
@@ -135,6 +147,18 @@ export async function getTxResultRetry({
           reGetCount,
         });
       }
+      captureMessage({
+        type: SentryMessageType.HTTP,
+        params: {
+          name: 'getTxResultRetry',
+          method: 'get',
+          query: {
+            TransactionId,
+            rpcUrl,
+          },
+          description: 'no txResult',
+        },
+      });
       throw Error(TargetErrorType.Default);
     }
 
@@ -142,6 +166,18 @@ export async function getTxResultRetry({
       const current = new Date().getTime();
       console.log('=====time', rePendingEnd, current);
       if (rePendingEnd && rePendingEnd <= current) {
+        captureMessage({
+          type: SentryMessageType.HTTP,
+          params: {
+            name: 'getTxResultRetry',
+            method: 'get',
+            query: {
+              TransactionId,
+              rpcUrl,
+            },
+            description: txResult,
+          },
+        });
         throw Error(TargetErrorType.Default);
       }
       await sleep(500);
@@ -159,6 +195,22 @@ export async function getTxResultRetry({
     if (txResult.Status.toLowerCase() === 'notexisted' && reNotexistedCount > 1) {
       await sleep(500);
       reNotexistedCount--;
+      captureMessage({
+        type: SentryMessageType.HTTP,
+        params: {
+          name: 'getTxResultRetry',
+          method: 'get',
+          query: {
+            TransactionId,
+            rpcUrl,
+          },
+          description: {
+            txResult,
+            reNotexistedCount,
+          },
+        },
+        level: Severity.Info,
+      });
       return getTxResultRetry({
         TransactionId,
         chainId,
@@ -172,6 +224,18 @@ export async function getTxResultRetry({
     if (txResult.Status.toLowerCase() === 'mined') {
       return { TransactionId, txResult };
     }
+    captureMessage({
+      type: SentryMessageType.HTTP,
+      params: {
+        name: 'getTxResultRetry',
+        method: 'get',
+        query: {
+          TransactionId,
+          rpcUrl,
+        },
+        description: txResult,
+      },
+    });
     throw Error(TargetErrorType.Default);
   } catch (error) {
     console.log('=====getTxResult error', error);
@@ -187,6 +251,18 @@ export async function getTxResultRetry({
         reGetCount,
       });
     }
+    captureMessage({
+      type: SentryMessageType.HTTP,
+      params: {
+        name: 'getTxResultRetry',
+        method: 'get',
+        query: {
+          TransactionId,
+          rpcUrl,
+        },
+        description: error,
+      },
+    });
     throw Error(TargetErrorType.Default);
   }
 }

@@ -69,6 +69,7 @@ export default function Game() {
     chessboardTotalStep,
     curChessboardNode,
     needSync,
+    checkerboardCounts,
   } = useGetState();
 
   const firstNode = checkerboardData![5][4];
@@ -109,8 +110,6 @@ export default function Game() {
   const [curDiceCount, setCurDiceCount] = useState<number>(1);
   const [diceNumbers, setDiceNumbers] = useState<number[]>([]);
 
-  const [loadingType, setLoadingType] = useState<LoadingType>(LoadingType.ONE);
-
   const translateRef = useRef<{
     x: number;
     y: number;
@@ -126,7 +125,6 @@ export default function Game() {
         playableCount: playerInfo?.playableCount && playerInfo?.playableCount > 0 ? playerInfo.playableCount - 1 : 0,
       }),
     );
-    updatePlayerInformation(address);
   };
 
   const updateTotalStep = (totalStep: number) => {
@@ -251,7 +249,7 @@ export default function Game() {
       if (bingoRes) {
         const bingoStep = bingoRes.gridNum;
         if (bingoRes.startGridNum !== totalStep) {
-          const stepDifference = (bingoRes.startGridNum + 18 - totalStep) % 18;
+          const stepDifference = (bingoRes.startGridNum + checkerboardCounts - totalStep) % checkerboardCounts;
           console.log('=====GetBingoReward stepDifference', stepDifference);
           for (let index = 0; index < stepDifference; index++) {
             currentNodeRef.current = currentNodeRef.current?.next || linkedList.current?.head || undefined;
@@ -449,10 +447,6 @@ export default function Game() {
     jump(step);
   };
 
-  const handleTransitionOver = () => {
-    setDiceType(RecreationModalType.DICE);
-  };
-
   const recreationModalOnClose = () => {
     updatePlayerInformation(address);
     setTreasureOpen(false);
@@ -548,10 +542,9 @@ export default function Game() {
           open={open}
           onClose={diceModalOnClose}
           diceNumbers={diceNumbers}
-          loadingType={loadingType}
           type={diceType}
           step={step}
-          onTransitionOver={handleTransitionOver}
+          curDiceCount={curDiceCount}
         />
         <RecreationModal
           open={treasureOpen}

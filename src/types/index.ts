@@ -212,6 +212,7 @@ export interface IConfigItems {
 export interface IChessboardData {
   data: ICheckerboardItem[][];
   imageResources: Record<string, string>;
+  checkerboardCounts: number;
 }
 
 export interface IChessboardDataResponse {
