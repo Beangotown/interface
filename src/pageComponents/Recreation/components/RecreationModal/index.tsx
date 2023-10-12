@@ -120,8 +120,20 @@ function RecreationModal(props: IRecreationModal) {
     [RecreationModalType.DICE]: (
       <div className="w-full h-full flex items-center justify-center mt-[-80px]">
         <div>{step}</div>
-        {diceNumbers?.map((item) => {
-          return getDiceCom(item);
+        {diceNumbers?.map((item, index) => {
+          return (
+            <Lottie
+              key={index}
+              loop={false}
+              autoplay={true}
+              animationData={dice[`${item}`]}
+              onComplete={() => {
+                index === diceNumbers.length - 1 && onClose && onClose();
+              }}
+              // className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-auto'}`}
+              className="flex-1 max-w-[640Px]"
+            />
+          );
         })}
       </div>
     ),
