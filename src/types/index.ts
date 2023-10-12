@@ -117,7 +117,6 @@ export interface IBoutInformation {
   diceNumbers: number[];
   startGridNum: number;
   endGridNum: number;
-  totalStep: number;
 }
 
 export interface IPlayerProps {

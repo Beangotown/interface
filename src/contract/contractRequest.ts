@@ -5,10 +5,11 @@ import { did } from '@portkey/did-ui-react';
 
 import { CallContractParams, IDiscoverInfo, PortkeyInfoType, WalletInfoType } from 'types';
 import { getAElfInstance, getViewWallet } from 'utils/contractInstance';
-import { aelf } from '@portkey/utils';
-import { getTxResult } from 'utils/getTxResult';
+import { aelf, sleep } from '@portkey/utils';
+import { getTxResultRetry } from 'utils/getTxResult';
 import DetectProvider from 'utils/InstanceProvider';
 import { Manager } from '@portkey/services';
+import { SECONDS_60 } from 'constants/time';
 
 interface IContractConfig {
   chainId: ChainId;
@@ -208,7 +209,12 @@ export default class ContractRequest {
 
     const { transactionId, TransactionId } = result.result || result;
     const resTransactionId = TransactionId || transactionId;
-    const transaction = await getTxResult(resTransactionId!, this.chainId as ChainId, 0, this.rpcUrl!);
+    const transaction = await getTxResultRetry({
+      TransactionId: resTransactionId!,
+      chainId: this.chainId as ChainId,
+      rpcUrl: this.rpcUrl!,
+      rePendingEnd: new Date().getTime() + SECONDS_60,
+    });
 
     return Promise.resolve({
       TransactionId: transaction.TransactionId,

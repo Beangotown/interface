@@ -20,7 +20,7 @@ import { ANIMATION_DURATION } from 'constants/animation';
 import useGetState from 'redux/state/useGetState';
 import RecreationModal, { LoadingType, RecreationModalType } from './components/RecreationModal';
 import { useDebounce, useDeepCompareEffect, useEffectOnce, useWindowSize } from 'react-use';
-import { CheckBeanPass, GetBingoReward, GetBoutInformation, Play } from 'contract/bingo';
+import { CheckBeanPass, GetBingoReward } from 'contract/bingo';
 import { GetBeanPassStatus, ShowBeanPassType } from 'components/CommonModal/type';
 import GetBeanPassModal from 'components/CommonModal/GetBeanPassModal';
 import { useAddress } from 'hooks/useAddress';
@@ -38,11 +38,11 @@ import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import roleImg from 'assets/base64/role';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
-import { getBlockHeightFromServer } from 'utils/getBlockHeightFromServer';
-import { getTxResult } from 'utils/getTxResult';
+import { getTxResultRetry } from 'utils/getTxResult';
 import { ChainId } from '@portkey/types';
 import { getList } from './utils/getList';
 import BoardRight from './components/BoardRight';
+import { SECONDS_60 } from 'constants/time';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -131,6 +131,7 @@ export default function Game() {
 
   const updateTotalStep = (totalStep: number) => {
     store.dispatch(setChessboardTotalStep(totalStep));
+    setTotalStep(totalStep);
   };
 
   const updatePosition = ({ x, y, state, currentNode }: IJumpCallbackParams) => {
@@ -239,50 +240,43 @@ export default function Game() {
       setGoLoading(true);
       setDiceType(RecreationModalType.LOADING);
       setOpen(true);
-      console.log('=====Play resetStart', resetStart);
-      const res = await Play({
+      console.log('=====GetBingoReward resetStart', resetStart);
+      const bingoRes = await GetBingoReward({
         resetStart,
         diceCount: curDiceCount,
       });
-      console.log('=====Play res', res);
-      if (res?.TransactionId) {
-        const boutInformation = await GetBoutInformation(res?.TransactionId);
-        console.log('=====Play GetBoutInformation', boutInformation);
-        updateStep();
-        setResetStart(false);
-        store.dispatch(setChessboardResetStart(false));
-
-        const bingoRes = await GetBingoReward(res.TransactionId);
-        console.log('=====Play GetBingoReward', bingoRes);
-        const step = bingoRes.gridNum;
-        updateTotalStep(bingoRes.totalStep);
-        setTotalStep(bingoRes.totalStep);
-        if (bingoRes.totalStep - step > totalStep) {
-          const stepDifference = bingoRes.totalStep - step - totalStep;
-          setRoleAnimationDuration(0);
+      setResetStart(false);
+      store.dispatch(setChessboardResetStart(false));
+      console.log('=====GetBingoReward bingoRes', bingoRes, totalStep);
+      if (bingoRes) {
+        const bingoStep = bingoRes.gridNum;
+        if (bingoRes.startGridNum !== totalStep) {
+          const stepDifference = (bingoRes.startGridNum + 18 - totalStep) % 18;
+          console.log('=====GetBingoReward stepDifference', stepDifference);
           for (let index = 0; index < stepDifference; index++) {
             currentNodeRef.current = currentNodeRef.current?.next || linkedList.current?.head || undefined;
           }
-          updateCheckerboard();
           linkedList.current?.updateCurrentNode(currentNodeRef.current || null);
+          updateCheckerboard();
         }
-        console.log('=====step jump');
+        console.log('=====GetBingoReward bingoStep jump');
+        updateTotalStep(bingoRes.endGridNum);
         setRoleAnimationDuration(ANIMATION_DURATION);
         setScore(bingoRes.score);
-        setStep(step);
+        setStep(bingoStep);
         setDiceNumbers(bingoRes.diceNumbers);
         setDiceType(RecreationModalType.DICE);
-        return;
       }
     } catch (error) {
       console.error('=====error', error);
       const resError = error as IContractError;
       showMessage.error(formatErrorMsg(resError).errorMessage?.message);
+      console.log('=====GetBingoReward end');
+      setMoving(false);
+      setOpen(false);
     }
-    setMoving(false);
     setGoLoading(false);
     updateStep();
-    setOpen(false);
   };
 
   const checkBeanPassStatus = useCallback(async () => {
@@ -351,7 +345,13 @@ export default function Game() {
 
       await sleep(configInfo?.stepUpdateDelay || 3000);
       try {
-        await getTxResult(transactionId, configInfo?.curChain as ChainId, 0, configInfo!.rpcUrl, 4);
+        await getTxResultRetry({
+          TransactionId: transactionId,
+          chainId: configInfo?.curChain as ChainId,
+          rpcUrl: configInfo!.rpcUrl,
+          rePendingEnd: new Date().getTime() + SECONDS_60,
+          reNotexistedCount: 5,
+        });
         updatePlayerInformation(address);
         setIsShowNFT(true);
       } catch (error) {
