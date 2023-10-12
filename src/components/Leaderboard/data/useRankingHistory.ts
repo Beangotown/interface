@@ -1,35 +1,15 @@
-import { graphQLRequest } from 'api/graphql';
 import useSWR from 'swr';
-import { IRankingHistoryResult } from './types';
 import { useAddressWithPrefixSuffix } from 'hooks/useAddressWithPrefixSuffix';
+import { getRankHistory } from 'api/request';
 
 export const useRankingHistory = (seasonId: string) => {
   const address = useAddressWithPrefixSuffix();
-  return useSWR([seasonId, address, 'getRankingSeasonHis'], async () => {
-    const { getRankingHistory } =
-      (await graphQLRequest<{
-        getRankingHistory: IRankingHistoryResult;
-      }>(`
-    query {
-      getRankingHistory(getRankingHisDto: {
-        seasonId: "${seasonId}"
-        caAddress: "${address}"
-      }) {
-      season {
-        rank
-        score
-        caAddress
-      }
-      weeks {
-        week
-        rank
-        score
-        caAddress
-      }
-    }
-  }
-  `)) || {};
+  return useSWR(seasonId && address ? 'getRankingSeasonHis' : null, async () => {
+    const rankingHistory = await getRankHistory({
+      SeasonId: `${seasonId}`,
+      CaAddress: `${address}`,
+    });
 
-    return getRankingHistory;
+    return rankingHistory;
   });
 };

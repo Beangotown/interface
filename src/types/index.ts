@@ -217,3 +217,14 @@ export interface IChessboardData {
 export interface IChessboardDataResponse {
   data: IChessboardData;
 }
+
+export interface IGetRankQuery {
+  CaAddress?: string;
+  SkipCount?: number;
+  MaxResultCount?: number | string;
+}
+
+export interface IRankHistoryQuery {
+  CaAddress?: string;
+  SeasonId?: string;
+}

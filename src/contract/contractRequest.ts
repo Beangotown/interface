@@ -10,6 +10,7 @@ import { getTxResultRetry } from 'utils/getTxResult';
 import DetectProvider from 'utils/InstanceProvider';
 import { Manager } from '@portkey/services';
 import { SECONDS_60 } from 'constants/time';
+import { MethodType, SentryMessageType, captureMessage } from 'utils/captureMessage';
 
 interface IContractConfig {
   chainId: ChainId;
@@ -152,6 +153,20 @@ export default class ContractRequest {
     return this.caContractProvider;
   };
 
+  private contractCaptureMessage = <T, R>(params: CallContractParams<T>, result: R, method: MethodType) => {
+    captureMessage({
+      type: SentryMessageType.CONTRACT,
+      params: {
+        name: params.methodName,
+        method: method,
+        query: params.args,
+        description: result,
+        walletAddress: this.caAddress,
+        contractAddress: params.contractAddress,
+      },
+    });
+  };
+
   public async callSendMethod<T, R>(params: CallContractParams<T>, sendOptions?: SendOptions) {
     if (this.walletType === WalletType.unknown) {
       throw new Error('Wallet not login');
@@ -179,6 +194,7 @@ export default class ContractRequest {
           result = await contract?.callSendMethod(params.methodName, address, params.args, sendOptions);
         } catch (error) {
           console.error('=====callSendMethod error', error);
+          this.contractCaptureMessage(params, error, MethodType.CALLSENDMETHOD);
           return Promise.reject(error);
         }
         break;
@@ -197,6 +213,7 @@ export default class ContractRequest {
             { onMethod: 'transactionHash' },
           );
         } catch (error) {
+          this.contractCaptureMessage(params, error, MethodType.CALLSENDMETHOD);
           return Promise.reject(error);
         }
       }
@@ -204,6 +221,7 @@ export default class ContractRequest {
 
     if (result?.error || result?.code || result?.Error) {
       console.error('=====callSendMethod error result', result);
+      this.contractCaptureMessage(params, result, MethodType.CALLSENDMETHOD);
       return Promise.reject(result);
     }
 
@@ -251,6 +269,7 @@ export default class ContractRequest {
           });
         } catch (error) {
           console.error('=====callSendMethodNoResult error discover', error);
+          this.contractCaptureMessage(params, error, MethodType.CALLSENDMETHOD);
           return Promise.reject(error);
         }
         break;
@@ -270,6 +289,7 @@ export default class ContractRequest {
           );
         } catch (error) {
           console.error('=====callSendMethodNoResult error portkey', error);
+          this.contractCaptureMessage(params, error, MethodType.CALLSENDMETHOD);
           return Promise.reject(error);
         }
       }
@@ -277,6 +297,7 @@ export default class ContractRequest {
 
     if (result?.error || result?.code || result?.Error) {
       console.error('=====callSendMethodNoResult result', result);
+      this.contractCaptureMessage(params, result, MethodType.CALLSENDMETHOD);
       return Promise.reject(result);
     }
 
@@ -301,6 +322,7 @@ export default class ContractRequest {
       }
       return res;
     } catch (error) {
+      this.contractCaptureMessage(params, error, MethodType.CALLVIEWMETHOD);
       return Promise.reject(error);
     }
   }
