@@ -20,3 +20,9 @@
   @apply h-[48px] w-[67%] text-[20px] text-[#fff] leading-[24px]; 
 
 }
+
+.recreation-modal-mobile {
+  :global(.ant-modal-body) {
+    @apply p-0;
+  }
+}

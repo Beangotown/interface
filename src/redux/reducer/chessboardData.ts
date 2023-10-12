@@ -49,6 +49,7 @@ export const { setChessboardData, setChessboardResetStart, setCurChessboardNode,
   chessboardDataSlice.actions;
 export const getChessboardData = (state: AppState) => state.chessboardData.chessboardData?.data;
 export const getImageResources = (state: AppState) => state.chessboardData.chessboardData?.imageResources;
+export const getCheckerboardCounts = (state: AppState) => state.chessboardData.chessboardData?.checkerboardCounts || 18;
 export const getCurChessboardNode = (state: AppState) => state.chessboardData.curChessboardNode;
 export const getResetStart = (state: AppState) => state.chessboardData.resetStart;
 export const getChessboardTotalStep = (state: AppState) => state.chessboardData.chessboardTotalStep;
