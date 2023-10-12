@@ -111,7 +111,8 @@ function GoButton({
     setCurPress(number);
   };
 
-  const changeDiceCount = () => {
+  const changeDiceCount = (event: any) => {
+    event.stopPropagation();
     const number = ((curDiceCount || 1) % diceCount.length) + 1;
     changeCurDiceCount && changeCurDiceCount(number);
     setCurPress(number);
@@ -169,8 +170,8 @@ function GoButton({
               onClick={() => go && go()}>
               <div
                 className={`${
-                  status === Status.LOADING ? 'top-[12px] left-[10px]' : 'left-[17px] top-0'
-                } absolute  flex flex-col items-center relative justify-center`}>
+                  status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[54px] top-0'
+                } absolute  flex flex-col w-fit items-center relative justify-center`}>
                 {statusCom[status]}
               </div>
               <div
