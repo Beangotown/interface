@@ -15,7 +15,7 @@ export interface IGameItem {
   gridNum: number;
   score: number;
   transcationFee: number;
-  playTransactionInfo: ITransactionInfo;
+  playTransactionInfo: ITransactionInfo | null;
   bingoTransactionInfo: ITransactionInfo | null;
 }
 
