@@ -8,7 +8,18 @@ import useGetState from 'redux/state/useGetState';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 
 import dataAnimation from 'assets/images/animation/treasureBox.json';
-import loadingDice from 'assets/images/animation/dice.json';
+import diceLoading1 from 'assets/images/diceLoading/dice-loading1.json';
+import diceLoading2 from 'assets/images/diceLoading/dice-loading2.json';
+import diceLoading3 from 'assets/images/diceLoading/dice-loading3.json';
+import diceLight1 from 'assets/images/diceLoading/dice-light1.json';
+import diceLight2 from 'assets/images/diceLoading/dice-light2.json';
+import diceLight3 from 'assets/images/diceLoading/dice-light3.json';
+import DiceRes1 from 'assets/images/diceLoading/dice-result1.svg';
+import DiceRes2 from 'assets/images/diceLoading/dice-result2.svg';
+import DiceRes3 from 'assets/images/diceLoading/dice-result3.svg';
+import DiceRes4 from 'assets/images/diceLoading/dice-result4.svg';
+import DiceRes5 from 'assets/images/diceLoading/dice-result5.svg';
+import DiceRes6 from 'assets/images/diceLoading/dice-result6.svg';
 import dice1 from 'assets/images/animation/dice1.json';
 import dice2 from 'assets/images/animation/dice2.json';
 import dice3 from 'assets/images/animation/dice3.json';
@@ -22,6 +33,7 @@ export enum RecreationModalType {
   LOADING = 'loading',
   DICE = 'dice',
   TREASURE = 'treasure',
+  TRANSITION = 'transition',
 }
 
 export enum TreasureStatus {
@@ -30,17 +42,25 @@ export enum TreasureStatus {
   OPENED = 'Opened',
 }
 
+export enum LoadingType {
+  ONE = 1,
+  TWO = 2,
+  THREE = 3,
+}
+
 interface IRecreationModal {
   open: boolean;
   step?: number;
   bean?: number;
   diceNumbers?: number[];
   type: RecreationModalType;
+  loadingType?: LoadingType;
   onClose?: () => void;
+  onTransitionOver?: () => void;
 }
 
 function RecreationModal(props: IRecreationModal) {
-  const { open, step, bean, type, onClose, diceNumbers } = props;
+  const { open, step, bean, type, onClose, diceNumbers, loadingType, onTransitionOver } = props;
 
   const { isMobile } = useGetState();
   const [treasureStatus, setTreasureStatus] = useState<TreasureStatus>(TreasureStatus.OPENED);
@@ -57,6 +77,27 @@ function RecreationModal(props: IRecreationModal) {
     6: dice6,
   };
 
+  const dicePic: Record<string, typeof React.Component> = {
+    1: DiceRes1,
+    2: DiceRes2,
+    3: DiceRes3,
+    4: DiceRes4,
+    5: DiceRes5,
+    6: DiceRes6,
+  };
+
+  const loadingAnis: Record<LoadingType, Record<string, any>> = {
+    [LoadingType.ONE]: diceLoading1,
+    [LoadingType.TWO]: diceLoading2,
+    [LoadingType.THREE]: diceLoading3,
+  };
+
+  const lights: Record<LoadingType, Record<string, any>> = {
+    [LoadingType.ONE]: diceLight1,
+    [LoadingType.TWO]: diceLight2,
+    [LoadingType.THREE]: diceLight3,
+  };
+
   const openTreasure = () => {
     if (openable) {
       treasureAnimationRef.current?.play();
@@ -70,24 +111,17 @@ function RecreationModal(props: IRecreationModal) {
     }
   }, [open]);
 
+  const getDiceCom = (key: number) => {
+    const Com = dicePic[key];
+    return <Com className="flex-1" key={key}></Com>;
+  };
+
   const modalContent: Record<RecreationModalType, ReactElement | null> = {
     [RecreationModalType.DICE]: (
       <div className="w-full h-full flex items-center justify-center mt-[-80px]">
         <div>{step}</div>
-        {diceNumbers?.map((item, index) => {
-          return (
-            <Lottie
-              key={index}
-              loop={false}
-              autoplay={true}
-              animationData={dice[`${item}`]}
-              onComplete={() => {
-                index === diceNumbers.length - 1 && onClose && onClose();
-              }}
-              // className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-auto'}`}
-              className="flex-1"
-            />
-          );
+        {diceNumbers?.map((item) => {
+          return getDiceCom(item);
         })}
       </div>
     ),
@@ -96,7 +130,7 @@ function RecreationModal(props: IRecreationModal) {
         <Lottie
           loop={true}
           autoplay={true}
-          animationData={loadingDice}
+          animationData={loadingAnis[loadingType || LoadingType.ONE]}
           className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}
         />
         <span
@@ -105,6 +139,19 @@ function RecreationModal(props: IRecreationModal) {
           }`}>
           {RANDOM_STEP}
         </span>
+      </div>
+    ),
+    [RecreationModalType.TRANSITION]: (
+      <div className="relative w-full h-full flex items-center justify-center mt-[-80px]">
+        <Lottie
+          loop={false}
+          autoplay={true}
+          animationData={lights[loadingType || LoadingType.ONE]}
+          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}
+          onComplete={() => {
+            onTransitionOver?.();
+          }}
+        />
       </div>
     ),
     [RecreationModalType.TREASURE]: (

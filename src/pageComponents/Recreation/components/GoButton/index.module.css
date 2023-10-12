@@ -1,20 +1,31 @@
-.button-mobile {  
+.button-mobile {
   @apply mt-[-41px];
 
   .button__border {
     @apply absolute z-50 top-0 bottom-0 left-0 m-auto w-full h-max pb-[9px];
 
     .button__border__top {
-      @apply  w-full h-[18px] shadow-[0_1px_2px_0_#FFF_inset] bg-[#E0DDCB];
+      @apply w-full h-[18px] shadow-[0_1px_2px_0_#FFF_inset] bg-[#E0DDCB];
     }
     .button__border__bottom {
-    @apply w-full h-[6px] shadow-[3px_0_3px_0_#FFFFFF29_inset] bg-[#E0DDCB];
-    
-      background: linear-gradient(270deg, #898694 15.84%, #95919B 53.29%);
+      @apply w-full h-[6px] shadow-[3px_0_3px_0_#FFFFFF29_inset] bg-[#E0DDCB];
+
+      background: linear-gradient(270deg, #898694 15.84%, #95919b 53.29%);
     }
   }
   .dice-number-mobile {
-    @apply w-[50px] h-[50px] bg-gray-500 flex items-center justify-center absolute right-[-50px] z-[51];
+    @apply w-[56px] h-[59px] flex justify-center absolute right-[-56px] top-[23.5px] z-[51] bg-[100%_100%] bg-no-repeat;
+
+    background-image: url('../../../../assets/images/diceButton/bg-default-m.png');
+    background-size: cover;
+  }
+
+  .dice-number-mobile-press {
+    background-image: url('../../../../assets/images/diceButton/bg-press-m.png');
+  }
+
+  .dice-content-mobile {
+    @apply w-[44px] h-[44px] mt-[-2px];
   }
 
   .button__icon {
@@ -27,17 +38,48 @@
       .button__icon__loading__bounce2 {
         @apply w-full h-full rounded-full bg-[#fff] opacity-[0.6] absolute top-0 left-0;
 
-        animation: loading-bounce 2.0s infinite ease-in-out;
+        animation: loading-bounce 2s infinite ease-in-out;
       }
 
       .button__icon__loading__bounce2 {
-        animation-delay: -1.0s;
+        animation-delay: -1s;
       }
     }
     svg {
       @apply w-full h-auto;
     }
   }
+}
+
+.btn-mobile {
+  @apply bg-[100%_100%] bg-no-repeat bg-contain w-[136px] h-auto z-[50];
+
+  background-image: url('../../../../assets/images/goButton/bg-go-default-m.png');
+}
+.btn-mobile-press {
+  background-image: url('../../../../assets/images/goButton/bg-go-press-m.png');
+}
+
+.btn-mobile-disabled {
+  background-image: url('../../../../assets/images/goButton/bg-go-disabled-m.png');
+}
+
+.btn-pc {
+  @apply bg-[100%_100%] bg-no-repeat bg-contain w-[422px] h-auto;
+
+  background-image: url('../../../../assets/images/goButton/bg-go-default-pc.png');
+}
+
+.btn-pc-hover {
+  background-image: url('../../../../assets/images/goButton/bg-go-hover-pc.png');
+}
+
+.btn-pc-press {
+  background-image: url('../../../../assets/images/goButton/bg-go-press-pc.png');
+}
+
+.btn-pc-disabled {
+  background-image: url('../../../../assets/images/goButton/bg-go-disabled-pc.png');
 }
 
 .button {
@@ -50,23 +92,43 @@
     }
   }
   .dice-number {
-    @apply w-[100px] h-[100px] flex items-center justify-center rounded-[30px] bg-[100%_100%] bg-no-repeat;
+    @apply w-[149px] h-[153px] bg-[100%_100%] bg-no-repeat flex-shrink-0 relative;
 
-    box-shadow: -24px 16px 12px 0 rgb(26.56 11.30 4.43 / 30%);
-    background-image: url('../../../../assets/images/diceButton/dice1.png');
+    background-image: url('../../../../assets/images/diceButton/bg-default.png');
     background-size: cover;
-
-    /* background-color: transparent; */
   }
+
+  .dice-content {
+    @apply w-[105px] h-[100px] absolute top-[6px] right-[16px];
+  }
+
+  .dice-content-press {
+    @apply top-[16px];
+  }
+
+  .dice-number:not(:first-child) {
+    @apply ml-[-8px];
+  }
+
   .dice-number.active {
-    /* @apply bg-pink-500; */
+    background-image: url('../../../../assets/images/diceButton/bg-selected.png');
   }
-}
 
-@keyframes loading-bounce {
-  0%, 100% { 
-    transform: scale(0.0);
-  } 50% { 
-    transform: scale(1.0);
+  .dice-number.press {
+    background-image: url('../../../../assets/images/diceButton/bg-press.png');
+  }
+
+  .dice-number.hover {
+    background-image: url('../../../../assets/images/diceButton/bg-hover.png');
+  }
+
+  @keyframes loading-bounce {
+    0%,
+    100% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1);
+    }
   }
 }

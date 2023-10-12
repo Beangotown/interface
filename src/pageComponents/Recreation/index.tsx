@@ -18,7 +18,7 @@ import Board from './components/Board';
 import GoButton, { Status } from './components/GoButton';
 import { ANIMATION_DURATION } from 'constants/animation';
 import useGetState from 'redux/state/useGetState';
-import RecreationModal, { RecreationModalType } from './components/RecreationModal';
+import RecreationModal, { LoadingType, RecreationModalType } from './components/RecreationModal';
 import { useDebounce, useDeepCompareEffect, useEffectOnce, useWindowSize } from 'react-use';
 import { CheckBeanPass, GetBingoReward, GetBoutInformation, Play } from 'contract/bingo';
 import { GetBeanPassStatus, ShowBeanPassType } from 'components/CommonModal/type';
@@ -108,6 +108,8 @@ export default function Game() {
 
   const [curDiceCount, setCurDiceCount] = useState<number>(1);
   const [diceNumbers, setDiceNumbers] = useState<number[]>([]);
+
+  const [loadingType, setLoadingType] = useState<LoadingType>(LoadingType.ONE);
 
   const translateRef = useRef<{
     x: number;
@@ -447,6 +449,10 @@ export default function Game() {
     jump(step);
   };
 
+  const handleTransitionOver = () => {
+    setDiceType(RecreationModalType.DICE);
+  };
+
   const recreationModalOnClose = () => {
     updatePlayerInformation(address);
     setTreasureOpen(false);
@@ -538,7 +544,15 @@ export default function Game() {
           />
         )}
 
-        <RecreationModal open={open} onClose={diceModalOnClose} diceNumbers={diceNumbers} type={diceType} step={step} />
+        <RecreationModal
+          open={open}
+          onClose={diceModalOnClose}
+          diceNumbers={diceNumbers}
+          loadingType={loadingType}
+          type={diceType}
+          step={step}
+          onTransitionOver={handleTransitionOver}
+        />
         <RecreationModal
           open={treasureOpen}
           onClose={recreationModalOnClose}
