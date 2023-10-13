@@ -15,7 +15,7 @@
   }
 
   .dice-number-mobile-press {
-    background-image: url('../../../../assets/images/diceButton/bg-default-m.png');
+    background-image: url('../../../../assets/images/diceButton/bg-press-m.png');
   }
 
   .dice-content-mobile {
@@ -23,7 +23,7 @@
   }
 
   .dice-content-mobile-press {
-    /* @apply mt-[8px] mr-[2px]; */
+    @apply mt-[8px] mr-[2px];
   }
 
   .button__icon {

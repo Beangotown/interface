@@ -6,7 +6,8 @@ import { getSeasonRank } from 'api/request';
 
 export const useSeasonRank = () => {
   const address = useAddressWithPrefixSuffix();
-  return useSWR(address ? 'getSeasonRank' : null, async () => {
+  return useSWR(['getSeasonRank', address], async () => {
+    if (!address) return;
     const seasonRank = await getSeasonRank({
       CaAddress: `${address}`,
       SkipCount: 0,

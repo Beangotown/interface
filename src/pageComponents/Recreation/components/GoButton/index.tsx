@@ -108,11 +108,11 @@ function GoButton({
 
   const chooseDiceCount = (number: number) => {
     changeCurDiceCount && changeCurDiceCount(number);
-    setCurPress(number);
   };
 
   const changeDiceCount = (event: any) => {
     event.stopPropagation();
+    event.nativeEvent.stopImmediatePropagation();
     const number = ((curDiceCount || 1) % diceCount.length) + 1;
     changeCurDiceCount && changeCurDiceCount(number);
     setCurPress(number);
@@ -132,6 +132,14 @@ function GoButton({
                   }}
                   onMouseLeave={() => {
                     setCurTouch(null);
+                  }}
+                  onMouseDown={() => {
+                    if (curDiceCount === item) return;
+                    chooseDiceCount(item);
+                    setCurPress(item);
+                  }}
+                  onMouseUp={() => {
+                    setCurPress(null);
                   }}
                   key={item}
                   className={`${styles['dice-number']} ${
@@ -162,6 +170,9 @@ function GoButton({
               onMouseDown={() => {
                 setMBtnPress(true);
               }}
+              onMouseUp={() => {
+                setMBtnPress(false);
+              }}
               className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex${
                 mBtnMouseOn && status === Status.NONE && styles['btn-mobile-hover']
               } ${mBtnPress && status === Status.NONE && styles['btn-mobile-press']} ${
@@ -178,7 +189,12 @@ function GoButton({
                 className={`${styles['dice-number-mobile']} ${
                   curDiceCount === curPressM && styles['dice-number-mobile-press']
                 }`}
-                onClick={changeDiceCount}>
+                onClick={changeDiceCount}
+                onMouseDown={changeDiceCount}
+                onMouseUp={() => {
+                  setCurPress(null);
+                  setCurPriceM(null);
+                }}>
                 <Image
                   src={require(`assets/images/diceButton/dice${curDiceCount}-m.png`)}
                   alt=""
@@ -200,6 +216,9 @@ function GoButton({
             onMouseDown={() => {
               setPcBtnPress(true);
             }}
+            onMouseUp={() => {
+              setPcBtnPress(false);
+            }}
             className={`${styles['btn-pc']} ${
               styles['button__icon']
             } cursor-custom relative flex items-center justify-center ${
@@ -208,7 +227,9 @@ function GoButton({
               status === Status.DISABLED && styles['btn-pc-disabled']
             }`}
             onClick={() => go && go()}>
-            <div className="absolute top-[4px] flex flex-col items-center justify-center">{statusCom[status]}</div>
+            <div className="absolute top-[10px] flex ml-[12px] flex-col items-center justify-center">
+              {statusCom[status]}
+            </div>
           </div>
         )}
       </div>

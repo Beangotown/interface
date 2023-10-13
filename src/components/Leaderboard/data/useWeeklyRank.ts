@@ -7,7 +7,8 @@ import { useAddressWithPrefixSuffix } from 'hooks/useAddressWithPrefixSuffix';
 export const useWeeklyRank = () => {
   const address = useAddressWithPrefixSuffix();
 
-  return useSWR(address ? 'getWeekRank' : null, async () => {
+  return useSWR(['getWeekRank', address], async () => {
+    if (!address) return;
     const weekRank = await getWeekRank({
       CaAddress: `${address}`,
       SkipCount: 0,

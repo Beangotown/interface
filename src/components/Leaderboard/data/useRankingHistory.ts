@@ -4,7 +4,8 @@ import { getRankHistory } from 'api/request';
 
 export const useRankingHistory = (seasonId: string) => {
   const address = useAddressWithPrefixSuffix();
-  return useSWR(seasonId && address ? 'getRankingSeasonHis' : null, async () => {
+  return useSWR(['getRankingSeasonHis', seasonId, address], async () => {
+    if (!seasonId || !address) return;
     const rankingHistory = await getRankHistory({
       SeasonId: `${seasonId}`,
       CaAddress: `${address}`,
