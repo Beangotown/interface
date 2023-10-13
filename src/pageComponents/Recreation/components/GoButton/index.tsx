@@ -91,7 +91,7 @@ function GoButton({
     [Status.DISABLED]: (
       <>
         <span
-          className={`font-fonarto font-[500] text-[#fff] text-stroke-[#8E8E8E] ${
+          className={`font-fonarto font-[500] tracking-tight text-[#fff] text-stroke-[#8E8E8E] ${
             isMobile ? 'text-[48px] leading-[48px] mt-[10px]' : 'text-[72px] leading-[72px] mb-[4px] mt-[2px]'
           }`}>
           Go
@@ -165,17 +165,17 @@ function GoButton({
               onTouchStart={(event) => {
                 event.preventDefault();
                 setMBtnPress(true);
-                go && go();
               }}
               onTouchEnd={() => {
                 setMBtnPress(false);
+                go && go();
               }}
               className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex ${
                 mBtnPress && styles['btn-mobile-press']
               } ${status === Status.DISABLED && styles['btn-mobile-disabled']}`}>
               <div
                 className={`${mBtnPress ? 'top-[4px]' : ''} ${
-                  status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[56px] top-0'
+                  status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[54px] top-0'
                 } absolute  flex flex-col w-fit h-fit items-center relative justify-center`}>
                 {statusCom[status]}
               </div>

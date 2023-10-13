@@ -17,7 +17,7 @@ export const getList = (
   linkedList.current?.append(current);
 
   if (node.arrow) {
-    let nextPosition: any = [];
+    let nextPosition: [number, number] = [nodePosition[0], nodePosition[1]];
     switch (node.arrow) {
       case ArrowDirection.LEFT:
         nextPosition = [nodePosition[0], nodePosition[1] - 1];

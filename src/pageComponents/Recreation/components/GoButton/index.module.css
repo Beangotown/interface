@@ -19,11 +19,11 @@
   }
 
   .dice-content-mobile {
-    @apply w-[44px] h-[44px] ml-[4px];
+    @apply w-[44px] h-[44px] ml-[7px];
   }
 
   .dice-content-mobile-press {
-    @apply mt-[8px] mr-[2px];
+    @apply mt-[3px];
   }
 
   .button__icon {
