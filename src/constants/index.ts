@@ -8,3 +8,5 @@ export enum NetworkType {
   MAIN = 'MAIN',
   TESTNET = 'TESTNET',
 }
+
+export const PORTKEY_ORIGIN_CHAIN_ID_KEY = 'PortkeyOriginChainId';

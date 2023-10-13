@@ -1,7 +1,7 @@
-import { WalletType } from 'constants/index';
+import { PORTKEY_ORIGIN_CHAIN_ID_KEY, WalletType } from 'constants/index';
 import { IPortkeyContract, getContractBasic } from '@portkey/contracts';
 import { ChainId, IContract, SendOptions } from '@portkey/types';
-import { did } from '@portkey/did-ui-react';
+import { did, managerApprove, getChain } from '@portkey/did-ui-react';
 
 import { CallContractParams, IDiscoverInfo, PortkeyInfoType, WalletInfoType } from 'types';
 import { getAElfInstance, getViewWallet } from 'utils/contractInstance';
@@ -9,6 +9,8 @@ import { aelf } from '@portkey/utils';
 import { getTxResult } from 'utils/getTxResult';
 import DetectProvider from 'utils/InstanceProvider';
 import { Manager } from '@portkey/services';
+
+import { getUrl, getFaviconUrl } from 'utils/common';
 
 interface IContractConfig {
   chainId: ChainId;
@@ -40,6 +42,8 @@ export default class ContractRequest {
   public viewContract?: IViewContract;
   private caAddress: string | undefined;
   private caHash: string | undefined;
+  private externalInfo: any = {};
+
   constructor() {
     this.viewContractMap = {};
   }
@@ -66,6 +70,7 @@ export default class ContractRequest {
     this.caHash = undefined;
     this.walletType = WalletType.unknown;
     this.wallet = {};
+    this.externalInfo = {};
   }
 
   public setWallet(wallet: WalletInfoType, walletType: WalletType) {
@@ -103,10 +108,19 @@ export default class ContractRequest {
         account,
         rpcUrl: this.rpcUrl,
       });
-      this.caContract = caContract;
-
       this.caAddress = didWalletInfo?.walletInfo?.address;
       this.caHash = didWalletInfo?.caInfo?.caHash;
+
+      const { href, hostname } = getUrl();
+      const icon = getFaviconUrl(href);
+      this.externalInfo.icon = icon;
+      this.externalInfo.name = hostname;
+      this.externalInfo.href = href;
+
+      // use amount from result of managerApprove not from params
+      // dapp user may change amount at pop-up
+
+      this.caContract = caContract;
     }
     return this.caContract;
   };
@@ -149,6 +163,44 @@ export default class ContractRequest {
       return contract;
     }
     return this.caContractProvider;
+  };
+
+  private portkeyCallSendMethod = async <T, R>(params: CallContractParams<T>, sendOptions?: SendOptions) => {
+    const chainInfo = await getChain(this.chainId!);
+    const originChainId = localStorage.getItem(PORTKEY_ORIGIN_CHAIN_ID_KEY);
+
+    if ((params.contractAddress === chainInfo?.defaultToken.address && params.methodName) === 'Approve') {
+      const { amount, guardiansApproved } = (await managerApprove({
+        originChainId,
+        targetChainId: this.chainId,
+        caHash: this.caHash,
+        ...params.args,
+        dappInfo: this.externalInfo,
+      } as any)) as any;
+      return await this.caContract?.callSendMethod(
+        'ManagerApprove',
+        '',
+        {
+          caHash: this.caHash,
+          ...params.args,
+          guardiansApproved,
+          amount,
+        },
+        sendOptions,
+      );
+    } else {
+      return await this.caContract?.callSendMethod(
+        'ManagerForwardCall',
+        this.caAddress!,
+        {
+          caHash: this.caHash,
+          contractAddress: params.contractAddress,
+          methodName: params.methodName,
+          args: params.args,
+        },
+        sendOptions,
+      );
+    }
   };
 
   public async callSendMethod<T, R>(params: CallContractParams<T>, sendOptions?: SendOptions) {
@@ -251,17 +303,7 @@ export default class ContractRequest {
       }
       case WalletType.portkey: {
         try {
-          result = await this.caContract?.callSendMethod(
-            'ManagerForwardCall',
-            this.caAddress!,
-            {
-              caHash: this.caHash,
-              contractAddress: params.contractAddress,
-              methodName: params.methodName,
-              args: params.args,
-            },
-            { onMethod: 'transactionHash' },
-          );
+          result = await this.portkeyCallSendMethod(params, { onMethod: 'transactionHash' });
         } catch (error) {
           console.error('=====callSendMethodNoResult error portkey', error);
           return Promise.reject(error);
