@@ -161,31 +161,21 @@ function GoButton({
         {isMobile ? (
           <div className={styles['button__border']}>
             <div
-              onMouseEnter={() => {
-                setMBtnMouseOn(true);
-              }}
-              onMouseLeave={() => {
-                setMBtnMouseOn(false);
-              }}
               onMouseDown={() => {
                 setMBtnPress(true);
+                go && go();
               }}
               onMouseUp={() => {
                 setMBtnPress(false);
+                console.log(2);
               }}
-              className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex${
-                mBtnMouseOn && status === Status.NONE && styles['btn-mobile-hover']
-              } ${mBtnPress && status === Status.NONE && styles['btn-mobile-press']} ${
-                status === Status.DISABLED && styles['btn-mobile-disabled']
-              }`}
-              onClick={() => {
-                setMBtnPress(true);
-                go && go();
-              }}>
+              className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex ${
+                mBtnPress && styles['btn-mobile-press']
+              } ${status === Status.DISABLED && styles['btn-mobile-disabled']}`}>
               <div
-                className={`${
+                className={`${mBtnPress ? 'top-[4px]' : ''} ${
                   status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[56px] top-0'
-                } absolute  flex flex-col w-fit items-center relative justify-center`}>
+                } absolute  flex flex-col w-fit h-fit items-center relative justify-center`}>
                 {statusCom[status]}
               </div>
               <div
@@ -230,7 +220,10 @@ function GoButton({
               status === Status.DISABLED && styles['btn-pc-disabled']
             }`}
             onClick={() => go && go()}>
-            <div className="absolute top-[10px] flex ml-[12px] flex-col items-center justify-center">
+            <div
+              className={`${
+                pcBtnPress ? 'mt-[5px]' : ''
+              } absolute top-[10px] flex ml-[12px] flex-col items-center justify-center`}>
               {statusCom[status]}
             </div>
           </div>
