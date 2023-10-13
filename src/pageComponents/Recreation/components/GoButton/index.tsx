@@ -45,7 +45,7 @@ function GoButton({
   const [curPress, setCurPress] = useState<number | null>(null);
   const [curTouch, setCurTouch] = useState<number | null>(null);
 
-  const [curPressM, setCurPriceM] = useState<number | null>(null);
+  const [curPressM, setCurPressM] = useState<number | null>(null);
 
   const [pcBtnMouseOn, setPcBtnMouseOn] = useState(false);
   const [mBtnMouseOn, setMBtnMouseOn] = useState(false);
@@ -114,9 +114,9 @@ function GoButton({
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
     const number = ((curDiceCount || 1) % diceCount.length) + 1;
-    changeCurDiceCount && changeCurDiceCount(number);
     setCurPress(number);
-    setCurPriceM(number);
+    setCurPressM(number);
+    changeCurDiceCount && changeCurDiceCount(number);
   };
 
   return (
@@ -178,22 +178,25 @@ function GoButton({
               } ${mBtnPress && status === Status.NONE && styles['btn-mobile-press']} ${
                 status === Status.DISABLED && styles['btn-mobile-disabled']
               }`}
-              onClick={() => go && go()}>
+              onClick={() => {
+                setMBtnPress(true);
+                go && go();
+              }}>
               <div
                 className={`${
-                  status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[54px] top-0'
+                  status === Status.LOADING ? 'top-[12px] left-[64px]' : 'left-[56px] top-0'
                 } absolute  flex flex-col w-fit items-center relative justify-center`}>
                 {statusCom[status]}
               </div>
               <div
                 className={`${styles['dice-number-mobile']} ${
-                  curDiceCount === curPressM && styles['dice-number-mobile-press']
+                  curDiceCount === curPressM ? styles['dice-number-mobile-press'] : ''
                 }`}
                 onClick={changeDiceCount}
                 onMouseDown={changeDiceCount}
                 onMouseUp={() => {
                   setCurPress(null);
-                  setCurPriceM(null);
+                  setCurPressM(null);
                 }}>
                 <Image
                   src={require(`assets/images/diceButton/dice${curDiceCount}-m.png`)}
