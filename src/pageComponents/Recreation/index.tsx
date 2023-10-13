@@ -243,6 +243,7 @@ export default function Game() {
         resetStart,
         diceCount: curDiceCount,
       });
+      updateStep();
       setResetStart(false);
       store.dispatch(setChessboardResetStart(false));
       console.log('=====GetBingoReward bingoRes', bingoRes, totalStep);
@@ -274,7 +275,6 @@ export default function Game() {
       setOpen(false);
     }
     setGoLoading(false);
-    updateStep();
   };
 
   const checkBeanPassStatus = useCallback(async () => {
