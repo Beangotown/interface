@@ -111,6 +111,7 @@ function GoButton({
   };
 
   const changeDiceCount = (event: any) => {
+    event.preventDefault();
     event.stopPropagation();
     event.nativeEvent.stopImmediatePropagation();
     const number = ((curDiceCount || 1) % diceCount.length) + 1;
@@ -161,13 +162,13 @@ function GoButton({
         {isMobile ? (
           <div className={styles['button__border']}>
             <div
-              onMouseDown={() => {
+              onTouchStart={(event) => {
+                event.preventDefault();
                 setMBtnPress(true);
                 go && go();
               }}
-              onMouseUp={() => {
+              onTouchEnd={() => {
                 setMBtnPress(false);
-                console.log(2);
               }}
               className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex ${
                 mBtnPress && styles['btn-mobile-press']
@@ -182,9 +183,10 @@ function GoButton({
                 className={`${styles['dice-number-mobile']} ${
                   curDiceCount === curPressM ? styles['dice-number-mobile-press'] : ''
                 }`}
-                onClick={changeDiceCount}
-                onMouseDown={changeDiceCount}
-                onMouseUp={() => {
+                onTouchStart={changeDiceCount}
+                onTouchEnd={(event) => {
+                  event.stopPropagation();
+                  event.nativeEvent.stopImmediatePropagation();
                   setCurPress(null);
                   setCurPressM(null);
                 }}>
