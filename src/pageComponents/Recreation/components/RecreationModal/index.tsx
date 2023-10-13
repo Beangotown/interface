@@ -77,13 +77,23 @@ function RecreationModal(props: IRecreationModal) {
 
   const modalContent: Record<RecreationModalType, ReactElement | null> = {
     [RecreationModalType.DICE]: (
-      <div className="relative w-full h-full flex items-center justify-center top-[-100px]">
-        {showDice && isMobile && (
-          <span className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto text-[28px] top-0`}>
-            {step} steps forward
-          </span>
-        )}
-        <div className={`relative ${isMobile ? 'h-auto w-full' : 'h-[720px] max-h-[640Px] w-[auto]'}`}>
+      <div className={`relative w-full h-full flex flex-col items-center justify-center top-0`}>
+        {showDice &&
+          step &&
+          (isMobile ? (
+            <div className="absolute top-[-120px] flex flex-col items-center justify-center">
+              <span className={`text-[#fff] left-0 right-0 m-auto text-center font-fonarto text-[64px]`}>{step}</span>
+              <span className={`text-[#fff] left-0 right-0 m-auto text-center font-fonarto text-[40px]`}>
+                {step === 1 ? 'Step Forward' : 'Steps Forward'}
+              </span>
+            </div>
+          ) : (
+            <span
+              className={`absolute top-[-100px] text-[#fff] left-0 right-0 m-auto text-center font-fonarto text-[96px]`}>
+              {step === 1 ? `${step} Step Forward` : `${step} Steps Forward`}
+            </span>
+          ))}
+        <div className={`relative ${isMobile ? 'h-auto w-full mt-[-40px]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}>
           <DiceResult curDiceCount={curDiceCount} diceNumbers={diceNumbers} showDice={showDice} />
           <Lottie
             loop={false}
@@ -97,20 +107,15 @@ function RecreationModal(props: IRecreationModal) {
             }}
           />
         </div>
-        {showDice && !isMobile && (
-          <span className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto text-[42px] bottom-0`}>
-            {step} steps forward
-          </span>
-        )}
       </div>
     ),
     [RecreationModalType.LOADING]: (
-      <div className="relative w-full h-full flex items-center justify-center top-[-100px]">
+      <div className="relative w-full h-full flex flex-col items-center justify-center top-0">
         <Lottie
           loop={true}
           autoplay={true}
           animationData={loadingAnis[`${curDiceCount || 1}`]}
-          className={`${isMobile ? 'h-auto w-[90%]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}
+          className={`${isMobile ? 'h-auto w-full mt-[-40px]' : 'h-[720px] max-h-[640Px] w-[auto]'}`}
         />
         <span
           className={`text-[#fff] absolute left-0 right-0 m-auto text-center font-fonarto ${

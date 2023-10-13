@@ -73,18 +73,24 @@ export const GameRecordItem = ({ data }: { data: IGameItem }) => {
   const isMobile = useIsMobile();
   const { gridNum, score, transcationFee, playTransactionInfo, bingoTransactionInfo } = data;
 
+  const triggerTime = playTransactionInfo?.triggerTime || bingoTransactionInfo?.triggerTime;
+
   return (
     <Disclosure as={Wrapper}>
       {({ open }) => (
         <div className="text-left">
           <div className="flex justify-between pb-4">
-            <div
-              className={`text-lg font-bold leading-normal text-white ${isMobile ? 'text-[1rem]' : 'text-[2.5rem]'}`}>
-              {getDateFormat(playTransactionInfo.triggerTime, 'dd MMM')}
-            </div>
-            <div className="text-md text-right text-white text-opacity-60">
-              {getDateFormat(playTransactionInfo.triggerTime, 'HH:mm:ss')}
-            </div>
+            {triggerTime && (
+              <div
+                className={`text-lg font-bold leading-normal text-white ${isMobile ? 'text-[1rem]' : 'text-[2.5rem]'}`}>
+                {getDateFormat(triggerTime, 'dd MMM')}
+              </div>
+            )}
+            {triggerTime && (
+              <div className="text-md text-right text-white text-opacity-60">
+                {getDateFormat(triggerTime, 'HH:mm:ss')}
+              </div>
+            )}
           </div>
           <table className="mb-4 w-full">
             <thead>

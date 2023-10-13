@@ -65,29 +65,33 @@ export const GetBoutInformation = async (playId: string, count = 2): Promise<IBo
   }
 };
 
-export const BingoNew = async ({
+export const Play = async ({
   resetStart,
   diceCount,
 }: IPlayerProps): Promise<{ TransactionId: string; TxResult: any }> => {
   try {
-    const res = (await bingoContract('BingoNew', { resetStart, diceCount }, ContractMethodType.SEND)) as {
+    const res = (await bingoContract(
+      'Play',
+      { resetStart, diceCount, executeBingo: true },
+      ContractMethodType.SEND,
+    )) as {
       TransactionId: string;
       TransactionResult: any;
     };
-    console.log('=====BingoNew result', res);
+    console.log('=====Play result', res);
     return {
       TransactionId: res?.TransactionId,
       TxResult: res?.TransactionResult,
     };
   } catch (error) {
-    console.log('=====BingoNew error', error);
+    console.log('=====Play error', error);
     return Promise.reject(error);
   }
 };
 
 export const GetBingoReward = async (params: IPlayerProps): Promise<IBoutInformation> => {
   try {
-    const { TransactionId } = await BingoNew(params);
+    const { TransactionId } = await Play(params);
     const rewardRes = await GetBoutInformation(TransactionId);
     if (rewardRes) {
       return rewardRes;
