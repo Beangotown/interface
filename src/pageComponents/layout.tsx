@@ -18,9 +18,10 @@ import { useRouter, usePathname } from 'next/navigation';
 import useGetState from 'redux/state/useGetState';
 import { KEY_NAME } from 'constants/platform';
 import { LoginStatus } from 'redux/types/reducerTypes';
-import { fetchChessboardData, fetchConfigItems } from 'api/request';
+import { fetchChessboardData, fetchConfigItems, fetchNoticeModal } from 'api/request';
 import { setConfigInfo } from 'redux/reducer/configInfo';
 import { setChessboardData } from 'redux/reducer/chessboardData';
+import { setNoticeModal } from 'redux/reducer/noticeModal';
 
 const Layout = dynamic(
   async () => {
@@ -47,6 +48,7 @@ const Layout = dynamic(
       const initConfigAndResource = async () => {
         const chessBoardPromise = fetchChessboardData();
         const configPromise = fetchConfigItems();
+        const noticeModalPromise = fetchNoticeModal();
 
         chessBoardPromise.then((res) => {
           store.dispatch(setChessboardData(res.data));
@@ -62,6 +64,17 @@ const Layout = dynamic(
             serviceUrl: res.data.portkeyServiceUrl,
             graphQLUrl: res.data.graphqlServer,
           });
+        });
+
+        noticeModalPromise.then((res) => {
+          if (res?.data?.halloween) {
+            store.dispatch(
+              setNoticeModal({
+                ...res.data.halloween,
+                open: false,
+              }),
+            );
+          }
         });
 
         Promise.all([chessBoardPromise, configPromise]).then((res) => {

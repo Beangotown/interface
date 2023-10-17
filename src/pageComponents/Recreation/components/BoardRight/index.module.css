@@ -5,3 +5,7 @@
 .game__pc__blur {
   @apply absolute z-[20] top-0 left-0 w-full h-full bg-no-repeat bg-[auto_100%] bg-right blur-[10px];
 }
+
+.game__pc__mask {
+  @apply absolute z-[21] top-0 left-0 w-full h-full bg-[#000]/[.6];
+}

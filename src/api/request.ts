@@ -5,6 +5,7 @@ import {
   IChessboardDataResponse,
   IGetRankQuery,
   IRankHistoryQuery,
+  INoticeModalResponse,
 } from 'types';
 import request, { cmsRequest } from './axios';
 import {
@@ -42,10 +43,18 @@ export const getRankHistory = async (query: IRankHistoryQuery): Promise<IRanking
   return request.get<any>('/app/rank/ranking-history', { params: query });
 };
 
+export const getPopup = async (params: { caAddress: string }): Promise<boolean> => {
+  return request.post('app/bean-pass/popup', params);
+};
+
 export const fetchConfigItems = async (): Promise<IConfigResponse> => {
   return cmsRequest.get<IConfigResponse>('items/config');
 };
 
 export const fetchChessboardData = async (): Promise<IChessboardDataResponse> => {
   return cmsRequest.get<IChessboardDataResponse>('items/chessboard_data');
+};
+
+export const fetchNoticeModal = async (): Promise<INoticeModalResponse> => {
+  return cmsRequest.get<INoticeModalResponse>('items/notice_modal');
 };

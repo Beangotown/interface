@@ -1,10 +1,5 @@
 import React, { ReactElement, useState } from 'react';
 
-import GoButtonSvg from 'assets/images/recreation/go-button.svg';
-import GoButtonDisabledSvg from 'assets/images/recreation/go-button-disabled.svg';
-import GoButtonPcSvg from 'assets/images/recreation/go-button-pc.svg';
-import GoButtonDisabledPcSvg from 'assets/images/recreation/go-button-pc-disabled.svg';
-
 import Image from 'next/image';
 
 import styles from './index.module.css';
@@ -48,22 +43,9 @@ function GoButton({
   const [curPressM, setCurPressM] = useState<number | null>(null);
 
   const [pcBtnMouseOn, setPcBtnMouseOn] = useState(false);
-  const [mBtnMouseOn, setMBtnMouseOn] = useState(false);
 
   const [pcBtnPress, setPcBtnPress] = useState(false);
   const [mBtnPress, setMBtnPress] = useState(false);
-
-  const GoButtonBg: Record<Status, ReactElement> = {
-    [Status.NONE]: <GoButtonSvg className="w-full h-full" />,
-    [Status.LOADING]: <GoButtonSvg className="w-full h-full" />,
-    [Status.DISABLED]: <GoButtonDisabledSvg className="w-full h-full" />,
-  };
-
-  const GoButtonPcBg: Record<Status, ReactElement> = {
-    [Status.NONE]: <GoButtonPcSvg className="w-full h-full" />,
-    [Status.LOADING]: <GoButtonPcSvg className="w-full h-full" />,
-    [Status.DISABLED]: <GoButtonDisabledPcSvg className="w-full h-full" />,
-  };
 
   const statusCom: Record<Status, ReactElement> = {
     [Status.NONE]: (

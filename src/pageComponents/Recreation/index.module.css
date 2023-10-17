@@ -15,7 +15,5 @@
 
   .game__content {
     @apply bg-gradient-to-t from-[#1D628B] to-[#14436E];
-
-    /* background: linear-gradient(180deg, #14436E 0%, #1D628B 100%); */
   }
 }
