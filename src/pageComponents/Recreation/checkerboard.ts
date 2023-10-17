@@ -1,4 +1,4 @@
-import { ANIMATION_DURATION } from 'constants/animation';
+import { ANIMATION_DURATION, RESIDENCE_TIME } from 'constants/animation';
 import { LottieRefCurrentProps } from 'lottie-react';
 
 export enum ArrowDirection {
@@ -99,7 +99,7 @@ export class CheckerboardList {
           });
         }
         clearTimeout(timer2);
-      }, this.animationDuration + 500);
+      }, this.animationDuration + RESIDENCE_TIME);
     }
   }
 
