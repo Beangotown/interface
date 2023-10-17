@@ -189,6 +189,7 @@ export interface IReward {
 
 export interface IConfigItems {
   rpcUrl: string;
+  discoverRpcUrl: string;
   network: string;
   curChain: Chain;
   graphqlServer: string;

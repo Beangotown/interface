@@ -81,6 +81,12 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       store.dispatch(setIsNeedSyncAccountInfo(false));
       return;
     }
+
+    if (walletType === WalletType.discover) {
+      store.dispatch(setIsNeedSyncAccountInfo(false));
+      return;
+    }
+
     const originChainId = localStorage.getItem(PORTKEY_LOGIN_CHAIN_ID_KEY);
     const wallet = await InstanceProvider.getWalletInstance();
     if (!wallet?.discoverInfo && !wallet?.portkeyInfo) {
@@ -89,53 +95,37 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
 
     do {
       try {
-        if (wallet.discoverInfo) {
-          if (!wallet.discoverInfo?.address) return;
+        if (!originChainId) return;
+        if (originChainId === curChain) {
+          syncAddress.current = true;
+        } else {
           showMessage.loading('Syncing on-chain account info');
-          let hasHolder = false;
+          let accountSyncInfo;
           try {
-            hasHolder = (await ContractRequest.get().getHolder(wallet.discoverInfo?.address || '')) ?? false;
+            accountSyncInfo = (await getAccountInfoSync(curChain, wallet?.portkeyInfo)) ?? {};
           } catch (err) {
-            console.error('discover sync err', err);
+            console.error('portkey sync err', err);
           }
-          if (hasHolder) {
+          const { holder, filteredHolders } = accountSyncInfo!;
+          if (holder && filteredHolders && filteredHolders.length) {
+            store.dispatch(
+              setWalletInfo({
+                portkeyInfo: {
+                  caInfo: {
+                    caAddress: holder.caAddress,
+                    caHash: holder.caHash,
+                  },
+                  pin: wallet?.portkeyInfo?.pin,
+                  chainId: curChain,
+                  walletInfo: wallet?.portkeyInfo?.walletInfo,
+                  accountInfo: wallet?.portkeyInfo?.accountInfo,
+                },
+              }),
+            );
+
             syncAddress.current = true;
           } else {
             await sleep(5000);
-          }
-        } else {
-          if (!originChainId) return;
-          if (originChainId === curChain) {
-            syncAddress.current = true;
-          } else {
-            showMessage.loading('Syncing on-chain account info');
-            let accountSyncInfo;
-            try {
-              accountSyncInfo = (await getAccountInfoSync(curChain, wallet?.portkeyInfo)) ?? {};
-            } catch (err) {
-              console.error('portkey sync err', err);
-            }
-            const { holder, filteredHolders } = accountSyncInfo!;
-            if (holder && filteredHolders && filteredHolders.length) {
-              store.dispatch(
-                setWalletInfo({
-                  portkeyInfo: {
-                    caInfo: {
-                      caAddress: holder.caAddress,
-                      caHash: holder.caHash,
-                    },
-                    pin: wallet?.portkeyInfo?.pin,
-                    chainId: curChain,
-                    walletInfo: wallet?.portkeyInfo?.walletInfo,
-                    accountInfo: wallet?.portkeyInfo?.accountInfo,
-                  },
-                }),
-              );
-
-              syncAddress.current = true;
-            } else {
-              await sleep(5000);
-            }
           }
         }
       } catch (err) {
@@ -286,6 +276,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     const config = {
       chainId: curChain,
       rpcUrl: configInfo.configInfo?.rpcUrl,
+      discoverRpcUrl: configInfo.configInfo?.discoverRpcUrl,
       contractAddress: configInfo!.configInfo!.bingoContractAddress,
     };
     contract.setWallet(walletInfo, walletType);

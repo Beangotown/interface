@@ -2751,12 +2751,12 @@
     "@portkey/utils" "^1.4.4-alpha.1"
     aelf-sdk "3.2.45-beta.0"
 
-"@portkey/detect-provider@1.0.1-alpha.0":
-  version "1.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@portkey/detect-provider/-/detect-provider-1.0.1-alpha.0.tgz#2226c674767291d2d4306b292d8273d5e7128dcf"
-  integrity sha512-B66UkXpy2oU4SaewDfht7f4teiNbhn6cgbXDqiRyDx62cKkMUzp1apcgxJJbdw80GO9F6cDUo21umzDcjYzvAg==
+"@portkey/detect-provider@1.1.0-alpha.5":
+  version "1.1.0-alpha.5"
+  resolved "https://registry.npmjs.org/@portkey/detect-provider/-/detect-provider-1.1.0-alpha.5.tgz#8df10b2a9bde5867d18e8acdf2bd8563ad6601ef"
+  integrity sha512-FheqBlca4321ppoNw0vYFLtv34XSQidUnO/wU34Al3CLxJVSewLRxm+Sniz3oE3nVbQMNfrg8V08tlfxlWOD9Q==
   dependencies:
-    "@portkey/provider-types" "^1.0.1-alpha.0"
+    "@portkey/provider-types" "^1.1.0-alpha.5"
 
 "@portkey/did-ui-react@1.4.4-alpha.0":
   version "1.4.4-alpha.0"
@@ -2817,10 +2817,10 @@
     bowser "^2.11.0"
     query-string "^7.1.1"
 
-"@portkey/provider-types@1.0.1-alpha.0":
-  version "1.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@portkey/provider-types/-/provider-types-1.0.1-alpha.0.tgz#303b383ac7306d91923b6b88c6ec356935371b2e"
-  integrity sha512-4tgoL7wJwW3ksS579KvdFFfoQhItKuURf5oKla80dGN9pdxaJ5MfW5vj/SORUZEYObe7WLwwP07zuPPWbBMO+g==
+"@portkey/provider-types@1.1.0-alpha.5", "@portkey/provider-types@^1.1.0-alpha.5":
+  version "1.1.0-alpha.5"
+  resolved "https://registry.npmjs.org/@portkey/provider-types/-/provider-types-1.1.0-alpha.5.tgz#4c303409a72a5200582e5858dcf2a0229547299d"
+  integrity sha512-K21Ey7N6AiBKGFIDiVWz0u5Fr5urCEuUr01r4+uMWo9vFY80xvWHcHK/aomfLLoM4QWuUaIGLszlUXaluHjoeA==
   dependencies:
     "@portkey/types" "1.0.0-alpha.4"
     "@types/readable-stream" "^2.3.15"
