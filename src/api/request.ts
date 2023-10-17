@@ -49,3 +49,7 @@ export const fetchConfigItems = async (): Promise<IConfigResponse> => {
 export const fetchChessboardData = async (): Promise<IChessboardDataResponse> => {
   return cmsRequest.get<IChessboardDataResponse>('items/chessboard_data');
 };
+
+export const trackUnlockInfo = async (body: { caAddress: string; caHash: string }) => {
+  return request.post('/app/trace/user-action', body);
+};

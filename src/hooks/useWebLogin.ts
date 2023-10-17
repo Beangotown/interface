@@ -17,7 +17,7 @@ import {
 import { LoginStatus } from 'redux/types/reducerTypes';
 import { store, useSelector } from 'redux/store';
 import { AccountsType, IDiscoverInfo, SocialLoginType, WalletType, PortkeyInfoType, WalletInfoType } from 'types';
-import { did, socialLoginAuth } from '@portkey/did-ui-react';
+import { DIDWalletInfo, did, socialLoginAuth } from '@portkey/did-ui-react';
 import isPortkeyApp from 'utils/inPortkeyApp';
 import openPageInDiscover from 'utils/openDiscoverPage';
 import getAccountInfoSync from 'utils/getAccountInfoSync';
@@ -32,6 +32,7 @@ import { ChainId } from '@portkey/provider-types';
 import { useRouter } from 'next/navigation';
 import { NetworkType } from 'constants/index';
 import { sleep } from 'utils/common';
+import { getSyncHolder, trackLoginInfo } from 'utils/trackAddressInfo';
 
 const KEY_NAME = 'BEANGOTOWN';
 
@@ -356,12 +357,18 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
         InstanceProvider.setWalletInfoInstance({
           portkeyInfo: walletInfo as PortkeyInfoType,
         });
+        const holder = await getSyncHolder(curChain, walletInfo as DIDWalletInfo);
+        trackLoginInfo({ caAddress: holder.caAddress, caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash });
       } else {
         store.dispatch(
           setWalletInfo({
             portkeyInfo: walletInfo,
           }),
         );
+        trackLoginInfo({
+          caAddress: (walletInfo as PortkeyInfoType)!.caInfo!.caAddress,
+          caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash,
+        });
       }
       store.dispatch(setLoginStatus(LoginStatus.LOGGED));
     }
