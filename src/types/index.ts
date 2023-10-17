@@ -169,6 +169,9 @@ export interface IBeanPassClaimRes {
   claimable: boolean;
   reason: BeanPassResons;
   transactionId: string;
+  symbol: string;
+  name: string;
+  nftImageUrl: string;
 }
 
 export interface IBeanPassClaimReq {
