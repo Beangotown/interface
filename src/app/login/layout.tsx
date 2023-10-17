@@ -26,7 +26,7 @@ const Layout = dynamic(
 
       const [hasLoadedSource, setHasLoadedSource] = useState(false);
 
-      const { isMobile: isMobileStore, chessBoardInfo, imageResources, isLogin } = useGetState();
+      const { isMobile: isMobileStore, chessBoardInfo, imageResources, isLogin, btnImageResources } = useGetState();
 
       const router = useRouter();
 
@@ -105,6 +105,10 @@ const Layout = dynamic(
           if (picName !== 'aloginBgPc' && picName !== 'aloginBgMobile') {
             imageResourcesArray.push(imageResources[picName]);
           }
+        }
+        const btnResources = isMobileStore ? btnImageResources!.mobile : btnImageResources!.pc;
+        for (const picName in btnResources) {
+          imageResourcesArray.push(btnResources[picName]);
         }
         imageResourcesArray = [isMobileStore ? bgM : bgPc, ...imageResourcesArray];
 

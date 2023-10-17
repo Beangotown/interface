@@ -29,8 +29,8 @@ export default function GetBeanPassModal({ type, ...props }: BeanPassModalPropsT
         title: 'Get a BeanPass',
         btnText: 'Get a BeanPass',
         contentArr: [
-          'You need to have a BeanPass NFT to start the game!',
-          'Click the button below to claim it for free. ',
+          'You need to have a BeanPass NFT to start the game. ',
+          'Click the button below to claim your BeanPass.',
         ],
       },
       [GetBeanPassStatus.Noneleft]: {
@@ -67,6 +67,9 @@ export default function GetBeanPassModal({ type, ...props }: BeanPassModalPropsT
         {displayText.contentArr.map((text) => {
           return <p key={text}>{text}</p>;
         })}
+        {configInfo?.isHalloween && (type === GetBeanPassStatus.Abled || type === GetBeanPassStatus.Recharge) && (
+          <p className="text-[#FEB800]">{`🎃Be mindful! You may get a "Witchy BeanPass" during the Halloween event.`}</p>
+        )}
       </div>
       {displayText.btnText && (
         <div className="mx-2">

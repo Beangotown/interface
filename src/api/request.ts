@@ -6,6 +6,8 @@ import {
   IGetRankQuery,
   IRankHistoryQuery,
   INoticeModalResponse,
+  IBeanPassListItem,
+  ISetCurBeanBody,
 } from 'types';
 import request, { cmsRequest } from './axios';
 import {
@@ -57,4 +59,11 @@ export const fetchChessboardData = async (): Promise<IChessboardDataResponse> =>
 
 export const fetchNoticeModal = async (): Promise<INoticeModalResponse> => {
   return cmsRequest.get<INoticeModalResponse>('items/notice_modal');
+};
+export const fetchBeanPassList = async (query: { caAddress: string }): Promise<Array<IBeanPassListItem>> => {
+  return request.get('/app/bean-pass/nft-list', { params: query });
+};
+
+export const setCurUsingBeanPass = async (body: ISetCurBeanBody): Promise<IBeanPassListItem> => {
+  return request.post('/app/bean-pass/using POST', body);
 };

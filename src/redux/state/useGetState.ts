@@ -9,6 +9,7 @@ import {
   getCurChessboardNode,
   getChessboardTotalStep,
   getCheckerboardCounts,
+  getBtnImageResources,
 } from 'redux/reducer/chessboardData';
 
 const useGetState = () => {
@@ -16,6 +17,7 @@ const useGetState = () => {
   const configInfo = useSelector(getConfigInfo);
   const chessBoardInfo = useSelector(getChessboardData);
   const imageResources = useSelector(getImageResources);
+  const btnImageResources = useSelector(getBtnImageResources);
   const resetStart = useSelector(getResetStart);
   const curChessboardNode = useSelector(getCurChessboardNode);
   const chessboardTotalStep = useSelector(getChessboardTotalStep);
@@ -31,9 +33,11 @@ const useGetState = () => {
     playerInfo: infoState.playerInfo,
     gameSetting: infoState.gameSetting,
     needSync: infoState.isNeedSyncAccountInfo,
+    curBeanPass: infoState.curBeanPass,
     configInfo,
     chessBoardInfo,
     imageResources,
+    btnImageResources,
     resetStart,
     curChessboardNode,
     chessboardTotalStep,

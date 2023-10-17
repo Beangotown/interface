@@ -215,6 +215,10 @@ export interface IConfigItems {
 export interface IChessboardData {
   data: ICheckerboardItem[][];
   imageResources: Record<string, string>;
+  btnImageResources: {
+    pc: Record<string, string>;
+    mobile: Record<string, string>;
+  };
   checkerboardCounts: number;
 }
 
@@ -239,4 +243,17 @@ export interface IGetRankQuery {
 export interface IRankHistoryQuery {
   CaAddress?: string;
   SeasonId?: string;
+}
+
+export interface IBeanPassListItem {
+  symbol: string;
+  tokenName: string;
+  nftImageUrl: string;
+  owned: boolean;
+  usingBeanPass: boolean;
+}
+
+export interface ISetCurBeanBody {
+  caAddress: string;
+  symbol: string;
 }

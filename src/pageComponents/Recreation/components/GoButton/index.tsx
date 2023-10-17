@@ -34,8 +34,15 @@ function GoButton({
   curDiceCount,
   changeCurDiceCount,
 }: IGoButton) {
-  const { isMobile } = useGetState();
+  const { isMobile, btnImageResources } = useGetState();
+
   const diceCount = [1, 2, 3];
+
+  const diceImages: Record<string, string> = {
+    1: btnImageResources!.pc['dice1'],
+    2: btnImageResources!.pc['dice2'],
+    3: btnImageResources!.pc['dice3'],
+  };
 
   const [curPress, setCurPress] = useState<number | null>(null);
   const [curTouch, setCurTouch] = useState<number | null>(null);
@@ -125,16 +132,25 @@ function GoButton({
                     setCurPress(null);
                   }}
                   key={item}
-                  className={`${styles['dice-number']} ${
-                    curDiceCount === item && curPress !== item && styles.active
-                  }  ${curPress === item && styles.press}  ${
-                    curTouch === item && curDiceCount !== item && styles['hover']
-                  }`}
+                  style={{
+                    backgroundImage: `url(${
+                      btnImageResources?.pc[
+                        curDiceCount === item && curPress !== item
+                          ? 'bg-dice-selected'
+                          : curPress === item
+                          ? 'bg-dice-press'
+                          : curTouch === item && curDiceCount !== item
+                          ? 'bg-dice-hover'
+                          : 'bg-dice-default'
+                      ]
+                    })`,
+                  }}
+                  className={`${styles['dice-number']}`}
                   onClick={() => chooseDiceCount(item)}>
                   {curPress && curPress === item && <div className={styles['dice-content-mask']}></div>}
 
-                  <Image
-                    src={require(`assets/images/diceButton/dice${item}.png`)}
+                  <img
+                    src={diceImages[item]}
                     alt=""
                     className={`${styles['dice-content']} ${curPress === item && styles['dice-content-press']}`}
                   />
@@ -154,9 +170,14 @@ function GoButton({
                 setMBtnPress(false);
                 go && go();
               }}
-              className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex ${
-                mBtnPress && styles['btn-mobile-press']
-              } ${status === Status.DISABLED && styles['btn-mobile-disabled']}`}>
+              style={{
+                backgroundImage: `url(${
+                  btnImageResources?.mobile[
+                    mBtnPress ? 'bg-go-press-m' : status === Status.DISABLED ? 'bg-go-disabled-m' : 'bg-go-default-m'
+                  ]
+                })`,
+              }}
+              className={`${styles['btn-mobile']} ${styles['button__icon']} cursor-custom relative flex`}>
               {mBtnPress && status === Status.NONE && <div className={styles['btn-mobile-mask']}></div>}
 
               <div
@@ -166,9 +187,12 @@ function GoButton({
                 {statusCom[status]}
               </div>
               <div
-                className={`relative ${styles['dice-number-mobile']} ${
-                  curDiceCount === curPressM ? styles['dice-number-mobile-press'] : ''
-                }`}
+                style={{
+                  backgroundImage: `url(${
+                    btnImageResources?.mobile[curDiceCount === curPressM ? 'bg-dice-press-m' : 'bg-dice-default-m']
+                  })`,
+                }}
+                className={`relative ${styles['dice-number-mobile']}`}
                 onTouchStart={changeDiceCount}
                 onTouchEnd={(event) => {
                   event.stopPropagation();
@@ -178,8 +202,8 @@ function GoButton({
                 }}>
                 {curPressM && <div className={styles['dice-content-mobile-mask']}></div>}
 
-                <Image
-                  src={require(`assets/images/diceButton/dice${curDiceCount}-m.png`)}
+                <img
+                  src={btnImageResources!.mobile[`dice${curDiceCount}-m`]}
                   alt=""
                   className={`${styles['dice-content-mobile']} ${
                     curPressM === curDiceCount && styles['dice-content-mobile-press']
@@ -203,13 +227,20 @@ function GoButton({
               setPcBtnPress(false);
               go && go();
             }}
-            className={`${styles['btn-pc']} ${
-              styles['button__icon']
-            } cursor-custom relative flex items-center justify-center z-[11] ${
-              pcBtnMouseOn && status === Status.NONE && styles['btn-pc-hover']
-            } ${pcBtnPress && status === Status.NONE && styles['btn-pc-press']} ${
-              status === Status.DISABLED && styles['btn-pc-disabled']
-            }`}>
+            style={{
+              backgroundImage: `url(${
+                btnImageResources?.pc[
+                  pcBtnMouseOn && status === Status.NONE
+                    ? 'bg-go-hover-pc'
+                    : pcBtnPress && status === Status.NONE
+                    ? 'bg-go-press-pc'
+                    : status === Status.DISABLED
+                    ? 'bg-go-disabled-pc'
+                    : 'bg-go-default-pc'
+                ]
+              })`,
+            }}
+            className={`${styles['btn-pc']} ${styles['button__icon']} cursor-custom relative flex items-center justify-center z-[11]  `}>
             {pcBtnPress && status === Status.NONE && <div className={styles['btn-pc-mask']}></div>}
             <div
               className={`${

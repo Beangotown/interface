@@ -16,6 +16,11 @@ export type ShowNFTModalPropsType = {
   onCancel: (e: MouseEvent<any>) => void;
   open: boolean;
   type: ShowBeanPassType;
+  beanPassItem?: {
+    symbol: string;
+    tokenName: string;
+    nftImageUrl: string;
+  };
 };
 
 export enum GetBeanPassStatus {

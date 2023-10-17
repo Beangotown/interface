@@ -62,6 +62,9 @@ export const infoSlice = createSlice({
     setIsNeedSyncAccountInfo(state, action) {
       state.isNeedSyncAccountInfo = action.payload;
     },
+    setCurBeanPass(state, action) {
+      state.curBeanPass = action.payload;
+    },
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
@@ -88,6 +91,7 @@ export const {
   setAssetVisible,
   setGameSetting,
   setIsNeedSyncAccountInfo,
+  setCurBeanPass,
 } = infoSlice.actions;
 export const selectInfo = (state: AppState) => state.info;
 export default infoSlice.reducer;

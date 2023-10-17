@@ -1,5 +1,12 @@
 import { ReactNode } from 'react';
-import { IAccountInfoSync, IGameSetting, IPlayerInformation, WalletInfoType, WalletType } from 'types';
+import {
+  IAccountInfoSync,
+  IBeanPassListItem,
+  IGameSetting,
+  IPlayerInformation,
+  WalletInfoType,
+  WalletType,
+} from 'types';
 
 export type InfoStateType = {
   isMobile?: boolean;
@@ -20,6 +27,7 @@ export type InfoStateType = {
   assetVisible: boolean;
   gameSetting?: IGameSetting;
   isNeedSyncAccountInfo: boolean;
+  curBeanPass?: IBeanPassListItem;
 };
 
 export type PageLoadingType = {
