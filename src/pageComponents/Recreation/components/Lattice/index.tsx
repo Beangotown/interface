@@ -18,7 +18,7 @@ function Lattice(props: { value: ICheckerboardItem }) {
   if (!value.image) return null;
   return (
     <div
-      className={`relative z-10 flex aspect-[56/60] w-full flex-col items-center justify-center rounded-[6px] ${
+      className={`relative z-10 flex aspect-[56/60] w-full flex-col items-center justify-center rounded-[14px] ${
         styles.lattice
       } ${!isMobile && styles['lattice-mobile']} ${value.arrow && styles['lattice--shadow']} bg-transparent`}>
       <div

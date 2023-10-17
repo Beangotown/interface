@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import Leaderboard from 'components/Leaderboard';
 
@@ -14,11 +14,13 @@ import SideBorder from './components/SideBorder';
 import Role from './components/Role';
 
 import Bus from 'assets/images/recreation/bus.svg';
+import Grave from 'assets/images/recreation/grave.svg';
+import Fence from 'assets/images/recreation/fence.svg';
 import Board from './components/Board';
 import GoButton, { Status } from './components/GoButton';
 import { ANIMATION_DURATION } from 'constants/animation';
 import useGetState from 'redux/state/useGetState';
-import RecreationModal, { LoadingType, RecreationModalType } from './components/RecreationModal';
+import RecreationModal, { RecreationModalType } from './components/RecreationModal';
 import { useDebounce, useDeepCompareEffect, useEffectOnce, useWindowSize } from 'react-use';
 import { CheckBeanPass, GetBingoReward } from 'contract/bingo';
 import { GetBeanPassStatus, ShowBeanPassType } from 'components/CommonModal/type';
@@ -36,13 +38,16 @@ import CountDownModal from 'components/CommonModal/CountDownModal';
 import { store } from 'redux/store';
 import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
-import roleImg from 'assets/base64/role';
+import roleCommon from 'assets/base64/role';
+import roleHalloween from 'assets/base64/roleHalloween';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getTxResultRetry } from 'utils/getTxResult';
 import { ChainId } from '@portkey/types';
 import { getList } from './utils/getList';
 import BoardRight from './components/BoardRight';
 import { SECONDS_60 } from 'constants/time';
+import NoticeModal from 'components/NoticeModal';
+import { getModalInfo } from './utils/getModalInfo';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -71,6 +76,13 @@ export default function Game() {
     needSync,
     checkerboardCounts,
   } = useGetState();
+
+  const roleImg = useMemo(() => {
+    return {
+      common: roleCommon,
+      halloween: roleHalloween,
+    }['halloween'];
+  }, []);
 
   const firstNode = checkerboardData![5][4];
   const firstNodePosition: [number, number] = [5, 4];
@@ -391,6 +403,11 @@ export default function Game() {
   useEffectOnce(() => {
     showMessage.loading();
 
+    getModalInfo({
+      isHalloween: configInfo?.isHalloween,
+      caAddress: address,
+    });
+
     setResetStart(chessboardResetStart);
     setTotalStep(chessboardTotalStep);
     currentNodeRef.current = curChessboardNode;
@@ -459,11 +476,11 @@ export default function Game() {
         <div
           className={`${styles['game__content']} flex overflow-hidden ${
             isMobile ? 'w-full flex-1' : 'h-full w-[40%] min-w-[500Px] max-w-[784Px]'
-          }`}>
+          } ${configInfo?.isHalloween && '!bg-[url(/images/recreation/checkerboard-bg.svg)] bg-cover'}`}>
           {isMobile && <Board hasNft={hasNft} onNftClick={onNftClick} />}
           <SideBorder side="left" />
           <div className="w-full overflow-y-auto overflow-x-hidden">
-            <div className={`flex-1 pl-[16px] ${isMobile ? 'pt-[41px]' : 'pt-[80px]'}`}>
+            <div className={`relative flex-1 pl-[16px] ${isMobile ? 'pt-[41px]' : 'pt-[80px]'}`}>
               <div className="relative z-[30]">
                 <Role
                   id="animationId"
@@ -500,9 +517,21 @@ export default function Game() {
                   );
                 })}
               </div>
-              <div className="ml-[-16px] mt-[-50px] w-full">
-                <Bus className={`${isMobile ? 'h-[120px] w-[120px]' : 'h-[240px] w-[240px]'}`} />
-              </div>
+              {configInfo?.isHalloween ? (
+                <div
+                  className={`absolute left-0 w-full flex ${
+                    isMobile ? 'h-[112px] bottom-[-46px] pl-[10px]' : 'h-[212px] bottom-[-76px] pl-[28px]'
+                  }`}>
+                  <Grave className={`${isMobile ? 'h-[94.5px] w-auto' : 'h-[185px] w-auto'}`} />
+                  <Fence
+                    className={`absolute bottom-0 right-[8px] ${isMobile ? 'h-[46px] w-auto' : 'h-[76px] w-auto'}`}
+                  />
+                </div>
+              ) : (
+                <div className="ml-[-16px] mt-[-50px] w-full">
+                  <Bus className={`${isMobile ? 'h-[120px] w-[120px]' : 'h-[240px] w-[240px]'}`} />
+                </div>
+              )}
             </div>
           </div>
 
@@ -567,6 +596,7 @@ export default function Game() {
       <Leaderboard />
       <GameRecord />
       <PageLoading />
+      <NoticeModal />
     </>
   );
 }

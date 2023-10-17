@@ -5,6 +5,7 @@ import { LeaderBoardItemAddress } from './LeaderBoardItemAddress';
 import { LeaderBoardItemScore } from './LeaderBoardItemScore';
 import { LeaderboardTextColors } from './LeaderBoardItemText';
 import { Rank } from './Rank';
+import { useMemo } from 'react';
 
 interface ITabContentUser {
   showMeIcon?: boolean;
@@ -15,6 +16,13 @@ interface ITabContentUser {
 export const TabContentUser = ({ showMeIcon, rank, address, score }: ITabContentUser) => {
   const isMobile = useIsMobile();
   const color: LeaderboardTextColors = LeaderboardTextColors.White;
+
+  const roleImg = useMemo(() => {
+    return {
+      common: require('assets/images/me-avatar.png').default.src,
+      halloween: require('assets/images/me-avatar-halloween.png').default.src,
+    }['halloween'];
+  }, []);
 
   const wrapperClassName = useConditionalRank({
     rank,
@@ -31,11 +39,7 @@ export const TabContentUser = ({ showMeIcon, rank, address, score }: ITabContent
       className={`${wrapperClassName} ${
         isMobile ? 'h-16 p-2' : 'h-20 pl-2'
       } flex items-center rounded-bl-2xl rounded-br-2xl`}>
-      <img
-        className={`${isMobile ? 'w-8' : 'w-16'}`}
-        src={require('assets/images/me-avatar.png').default.src}
-        alt="avatar"
-      />
+      <img className={`${isMobile ? 'w-8' : 'w-16'}`} src={roleImg} alt="avatar" />
       <Rank rank={rank} />
       <LeaderBoardItemAddress address={address} color={color} />
       {showMeIcon ? <img className="ml-2 w-16" src={require('assets/images/me.png').default.src} alt="me" /> : null}

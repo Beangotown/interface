@@ -5,12 +5,14 @@ import InfoReducer, { infoSlice } from './reducer/info';
 import GlobalComponentsInfoReducer, { globalComponentsInfoSlice } from './reducer/globalComponentsInfo';
 import ConfigInfoReducer, { configInfoSlice } from './reducer/configInfo';
 import ChessboardDataReducer, { chessboardDataSlice } from './reducer/chessboardData';
+import NoticeModalReducer, { noticeModalSlice } from './reducer/noticeModal';
 
 export const rootReducer = combineReducers({
   [infoSlice.name]: InfoReducer,
   [globalComponentsInfoSlice.name]: GlobalComponentsInfoReducer,
   [configInfoSlice.name]: ConfigInfoReducer,
   [chessboardDataSlice.name]: ChessboardDataReducer,
+  [noticeModalSlice.name]: NoticeModalReducer,
 });
 
 const makeStore = () =>

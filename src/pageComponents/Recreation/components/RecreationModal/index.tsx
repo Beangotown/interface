@@ -8,6 +8,7 @@ import useGetState from 'redux/state/useGetState';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 
 import dataAnimation from 'assets/images/animation/treasureBox.json';
+import treasureBoxHalloween from 'assets/images/animation/treasureBoxHalloween.json';
 import diceLoading1 from 'assets/images/diceLoading/dice-loading1.json';
 import diceLoading2 from 'assets/images/diceLoading/dice-loading2.json';
 import diceLoading3 from 'assets/images/diceLoading/dice-loading3.json';
@@ -48,7 +49,7 @@ interface IRecreationModal {
 function RecreationModal(props: IRecreationModal) {
   const { open, step, bean, type, onClose, diceNumbers, curDiceCount } = props;
 
-  const { isMobile } = useGetState();
+  const { isMobile, configInfo } = useGetState();
   const [treasureStatus, setTreasureStatus] = useState<TreasureStatus>(TreasureStatus.OPENED);
   const [openable, setOpenable] = useState<boolean>(true);
   const [showDice, setShowDice] = useState<boolean>(false);
@@ -130,10 +131,19 @@ function RecreationModal(props: IRecreationModal) {
         <div className={`relative flex items-center justify-center mt-[100px]`}>
           {treasureStatus === TreasureStatus.OPENED ? (
             <div
-              className={`absolute left-0 right-0 z-[40] m-auto ${
-                isMobile ? 'h-auto w-[67%] top-[-105%]' : 'h-auto w-[377px] top-[-60%]'
+              className={`absolute left-0 right-0 z-[51] m-auto ${
+                configInfo?.isHalloween
+                  ? isMobile
+                    ? 'h-[90px] top-[-90px]'
+                    : 'h-[121px] top-[-121px]'
+                  : isMobile
+                  ? 'h-auto w-[67%] top-[-105%]'
+                  : 'h-auto w-[377px] top-[-60%]'
               }`}>
-              <img src={lightTreasure} className="relative z-[20] h-full w-full" alt="lightTreasure" />
+              {!configInfo?.isHalloween && (
+                <img src={lightTreasure} className="relative z-[20] h-full w-full" alt="lightTreasure" />
+              )}
+
               <span
                 className={`absolute bottom-0 left-0 right-0 font-[900] top-0 z-[30] m-auto flex items-center justify-center text-[#fff] ${
                   isMobile ? 'text-[64px]' : 'text-[96px]'
@@ -146,7 +156,7 @@ function RecreationModal(props: IRecreationModal) {
             lottieRef={treasureAnimationRef}
             loop={false}
             autoplay={false}
-            animationData={dataAnimation}
+            animationData={configInfo?.isHalloween ? treasureBoxHalloween : dataAnimation}
             onComplete={() => {
               setTreasureStatus(TreasureStatus.OPENED);
             }}

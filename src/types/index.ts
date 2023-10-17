@@ -2,7 +2,9 @@ import { IVerifyInfo, ManagerInfoType, TVerifierItem } from '@portkey/did-ui-rea
 import { Accounts, ChainId } from '@portkey/provider-types';
 import type { Manager } from '@portkey/services';
 import { IBlockchainWallet } from '@portkey/types';
+import { ModalProps } from 'antd';
 import { ICheckerboardItem } from 'pageComponents/Recreation/checkerboard';
+import { INoticeModal } from 'redux/reducer/noticeModal';
 
 export type TokenInfo = {
   decimals: number;
@@ -207,6 +209,7 @@ export interface IConfigItems {
   beanPassPicUrl: string;
   sumScore: number;
   minElfNum: number;
+  isHalloween?: boolean;
 }
 
 export interface IChessboardData {
@@ -217,6 +220,14 @@ export interface IChessboardData {
 
 export interface IChessboardDataResponse {
   data: IChessboardData;
+}
+
+export interface IChessboardDataResponse {
+  data: IChessboardData;
+}
+
+export interface INoticeModalResponse {
+  data: Record<string, ModalProps & INoticeModal>;
 }
 
 export interface IGetRankQuery {
