@@ -11,9 +11,10 @@ import { useAddress } from 'hooks/useAddress';
 import { IBeanPassListItem } from 'types';
 import { store } from 'redux/store';
 import { setCurBeanPass } from 'redux/reducer/info';
+import showMessage from 'utils/setGlobalComponentsInfo';
 
 export default function ShowNftModal({ type, onCancel, open, beanPassItem }: ShowNFTModalPropsType) {
-  const { configInfo } = useGetState();
+  const { configInfo, curBeanPass } = useGetState();
 
   const address = useAddress();
 
@@ -21,15 +22,14 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
 
   const [beanPassList, setBeanPassList] = useState<Array<IBeanPassListItem>>([]);
 
+  const [showLeftToggle, setShowLeftToggle] = useState(false);
+
+  const [showRightToggle, setShowRightToggle] = useState(false);
+
   const handleJumpExplor = () => {
     if (!curNft?.owned) return;
-    window.open(configInfo?.beanPassTerminalUrl || '', '_blank');
+    window.open(`${configInfo!.explorerBeanPassUrl}${curNft.symbol}`, '_blank');
   };
-
-  const curBeanPassId = useMemo(() => {
-    const strs = configInfo?.beanPassTerminalUrl.split('-');
-    return strs?.[strs?.length - 1];
-  }, [configInfo]);
 
   const onChange = (number: number) => {
     setCurNftIndex(number);
@@ -52,15 +52,47 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
 
   const initBeanPassList = useCallback(async () => {
     const beanPassList = await fetchBeanPassList({ caAddress: address });
+    const ownedArr = beanPassList.filter((i) => i.owned);
+    if (open) {
+      if (!ownedArr.length) {
+        showMessage.error(`You don't have any BeanPass NFTs in your account.`);
+      } else {
+        if (curBeanPass) {
+          const curBeanPassFilter = beanPassList.filter((i) => i.symbol === curBeanPass.symbol);
+          if (curBeanPassFilter.length && !curBeanPassFilter[0].owned) {
+            showMessage.error('This BeanPass NFT is currently not in your account.');
+          }
+        }
+      }
+    }
     setBeanPassList(beanPassList);
-  }, [address]);
+  }, [address, curBeanPass, open]);
 
   useEffect(() => {
     if (beanPassList.length) {
       const curUseBeanPass = beanPassList.filter((i) => i.usingBeanPass);
-      store.dispatch(setCurBeanPass(curUseBeanPass[0]));
+      curUseBeanPass?.[0] && store.dispatch(setCurBeanPass(curUseBeanPass[0]));
     }
   }, [beanPassList]);
+
+  useEffect(() => {
+    if (beanPassList.length > 1) {
+      if (curNftIndex === 0) {
+        setShowLeftToggle(false);
+        setShowRightToggle(true);
+      } else if (curNftIndex === beanPassList.length - 1) {
+        setShowLeftToggle(true);
+        setShowRightToggle(false);
+      } else {
+        setShowLeftToggle(true);
+        setShowRightToggle(true);
+      }
+    }
+  }, [beanPassList, curNftIndex]);
+
+  useEffect(() => {
+    open && initBeanPassList();
+  }, [initBeanPassList, open]);
 
   useEffect(() => {
     if (type === ShowBeanPassType.Display) {
@@ -75,9 +107,15 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
         symbol: curNft.symbol,
       });
       console.log(res);
+      if (res && !res.owned) {
+        showMessage.error('This BeanPass NFT is currently not in your account.');
+      }
       initBeanPassList();
     } else {
-      console.log('gotofores');
+      window.open(
+        `${configInfo!.forestNftDetailUrl}${configInfo!.curChain}-${curNft?.symbol}/${configInfo?.curChain}`,
+        '_blank',
+      );
     }
   };
 
@@ -91,9 +129,13 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
       {type === ShowBeanPassType.Display ? (
         <>
           <div className={styles.nft__pic}>
-            <div className={styles['left-icon']} onClick={handlePrev}>
-              <img src={require('assets/images/icon-left.png').default.src} alt="" className={styles['icon']} />
-            </div>
+            {showLeftToggle && (
+              <div
+                className={`${styles['left-icon']} ${!showRightToggle ? 'absolute left-0' : ''}`}
+                onClick={handlePrev}>
+                <img src={require('assets/images/icon-left.png').default.src} alt="" className={styles['icon']} />
+              </div>
+            )}
 
             <div className="mx-auto h-[160px] w-[160px] md:mt-0 md:h-[240px]  md:w-[240px] relative">
               <Carousel afterChange={onChange} dots={false} ref={carousel}>
@@ -120,9 +162,13 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
               </Carousel>
             </div>
 
-            <div className={styles['right-icon']} onClick={handleNext}>
-              <img src={require('assets/images/icon-right.png').default.src} alt="" className={styles['icon']} />
-            </div>
+            {showRightToggle && (
+              <div
+                className={`${styles['right-icon']} ${!showLeftToggle ? 'absolute right-0' : ''}`}
+                onClick={handleNext}>
+                <img src={require('assets/images/icon-right.png').default.src} alt="" className={styles['icon']} />
+              </div>
+            )}
           </div>
           <div className={styles.nft__label} onClick={handleJumpExplor}>
             <span className={`${styles.nft__text} ${!curNft?.owned ? 'opacity-60' : ''}`}>

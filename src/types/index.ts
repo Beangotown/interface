@@ -206,10 +206,11 @@ export interface IConfigItems {
   faucetContractAddress: string;
   stepUpdateDelay: number;
   beanPassTerminalUrl: string;
-  beanPassPicUrl: string;
   sumScore: number;
   minElfNum: number;
   isHalloween?: boolean;
+  explorerBeanPassUrl: string;
+  forestNftDetailUrl: string;
 }
 
 export interface IChessboardData {

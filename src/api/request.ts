@@ -65,5 +65,5 @@ export const fetchBeanPassList = async (query: { caAddress: string }): Promise<A
 };
 
 export const setCurUsingBeanPass = async (body: ISetCurBeanBody): Promise<IBeanPassListItem> => {
-  return request.post('/app/bean-pass/using POST', body);
+  return request.post('/app/bean-pass/using', body);
 };
