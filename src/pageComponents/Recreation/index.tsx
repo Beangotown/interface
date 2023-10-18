@@ -27,7 +27,7 @@ import { BeanPassItemType, GetBeanPassStatus, ShowBeanPassType } from 'component
 import GetBeanPassModal from 'components/CommonModal/GetBeanPassModal';
 import { useAddress } from 'hooks/useAddress';
 import { useRouter } from 'next/navigation';
-import { getBeanPassClaimClaimable, receiveBeanPassNFT } from 'api/request';
+import { fetchBeanPassList, getBeanPassClaimClaimable, receiveBeanPassNFT } from 'api/request';
 import useWebLogin from 'hooks/useWebLogin';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import BoardLeft from './components/BoardLeft';
@@ -440,8 +440,16 @@ export default function Game() {
     setIsShowNFT(false);
   };
 
-  const onNftClick = () => {
+  const onNftClick = async () => {
     if (hasNft) {
+      const beanPassList = await fetchBeanPassList({ caAddress: address });
+      const ownedArr = beanPassList.filter((i) => i.owned);
+      if (!ownedArr.length) {
+        showMessage.error(TargetErrorType.Error1);
+        initCheckBeanPass();
+        updatePlayerInformation(address);
+        return;
+      }
       setNFTModalType(ShowBeanPassType.Display);
       setIsShowNFT(true);
     } else {
@@ -464,6 +472,12 @@ export default function Game() {
 
   const changeCurDiceCount = (num: number) => {
     setCurDiceCount(num);
+  };
+
+  const handleNoneOwned = () => {
+    setIsShowNFT(false);
+    initCheckBeanPass();
+    updatePlayerInformation(address);
   };
 
   return (
@@ -587,6 +601,7 @@ export default function Game() {
           beanPassItem={beanPassInfoDto}
           onCancel={onShowNFTModalCancel}
           type={nftModalType}
+          handleNoneOwned={handleNoneOwned}
         />
         <CountDownModal
           open={countDownModalOpen}

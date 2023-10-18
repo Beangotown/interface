@@ -13,8 +13,9 @@ import { store } from 'redux/store';
 import { setCurBeanPass } from 'redux/reducer/info';
 import { qualityBlue } from 'constants/nft';
 import showMessage from 'utils/setGlobalComponentsInfo';
+import { TargetErrorType } from 'utils/formattError';
 
-export default function ShowNftModal({ type, onCancel, open, beanPassItem }: ShowNFTModalPropsType) {
+export default function ShowNftModal({ type, onCancel, open, beanPassItem, handleNoneOwned }: ShowNFTModalPropsType) {
   const { configInfo, curBeanPass } = useGetState();
 
   const address = useAddress();
@@ -56,7 +57,9 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
     const ownedArr = beanPassList.filter((i) => i.owned);
     if (open) {
       if (!ownedArr.length) {
-        showMessage.error(`You don't have any BeanPass NFTs in your account.`);
+        showMessage.error(TargetErrorType.Error1);
+        handleNoneOwned();
+        return;
       } else {
         if (curBeanPass) {
           const curBeanPassFilter = beanPassList.filter((i) => i.symbol === curBeanPass.symbol);
@@ -92,20 +95,16 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
   }, [beanPassList, curNftIndex]);
 
   useEffect(() => {
-    open && initBeanPassList();
-  }, [open]);
-
-  useEffect(() => {
     if (!open) {
       setCurNftIndex(0);
     }
   }, [open]);
 
   useEffect(() => {
-    if (type === ShowBeanPassType.Display) {
+    if (open && type === ShowBeanPassType.Display) {
       address && initBeanPassList();
     }
-  }, [address, type]);
+  }, [address, type, open]);
 
   const handleUse = async () => {
     if (curNft?.owned) {

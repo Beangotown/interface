@@ -23,6 +23,7 @@ export type ShowNFTModalPropsType = {
   open: boolean;
   type: ShowBeanPassType;
   beanPassItem?: BeanPassItemType;
+  handleNoneOwned: () => void;
 };
 
 export enum GetBeanPassStatus {
