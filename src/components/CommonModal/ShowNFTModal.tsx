@@ -93,7 +93,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
 
   useEffect(() => {
     open && initBeanPassList();
-  }, [initBeanPassList, open]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -105,7 +105,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
     if (type === ShowBeanPassType.Display) {
       address && initBeanPassList();
     }
-  }, [address, initBeanPassList, type]);
+  }, [address, type]);
 
   const handleUse = async () => {
     if (curNft?.owned) {
@@ -114,9 +114,6 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
         symbol: curNft.symbol,
       });
       console.log(res);
-      if (res && !res.owned) {
-        showMessage.error('This BeanPass NFT is currently not in your account.');
-      }
       initBeanPassList();
     } else {
       window.open(
