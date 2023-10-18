@@ -36,7 +36,7 @@ import { BeanPassResons, IContractError, WalletType } from 'types';
 import ShowNFTModal from 'components/CommonModal/ShowNFTModal';
 import CountDownModal from 'components/CommonModal/CountDownModal';
 import { store } from 'redux/store';
-import { formatErrorMsg } from 'utils/formattError';
+import { TargetErrorType, formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getTxResultRetry } from 'utils/getTxResult';
