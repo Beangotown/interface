@@ -1,3 +1,4 @@
+import { USER_REJECTED } from 'constants/errorMessage';
 import { IContractError } from 'types';
 
 enum SourceErrorType {
@@ -9,6 +10,9 @@ enum SourceErrorType {
   Error6 = 'Invalid target height',
   Error7 = 'Syncing on-chain account info',
   Error8 = 'You closed the prompt without any action',
+  Error9 = 'Operation canceled',
+  Error10 = 'User denied',
+  Error11 = 'User close the prompt',
 }
 export enum TargetErrorType {
   Error1 = 'Not enough BeanPass NFT to start the game',
@@ -18,7 +22,10 @@ export enum TargetErrorType {
   Error5 = 'You have tried too many times',
   Error6 = 'Please try again later',
   Error7 = 'Syncing on-chain account info',
-  Error8 = 'Request rejected. BeanGo Town needs your permission to continue',
+  Error8 = USER_REJECTED,
+  Error9 = USER_REJECTED,
+  Error10 = USER_REJECTED,
+  Error11 = USER_REJECTED,
   Default = 'Please check your internet connection and try again.',
 }
 
@@ -33,6 +40,9 @@ const matchErrorMsg = <T>(message: T) => {
       SourceErrorType.Error6,
       SourceErrorType.Error7,
       SourceErrorType.Error8,
+      SourceErrorType.Error9,
+      SourceErrorType.Error10,
+      SourceErrorType.Error11,
     ];
     const targetErrors = [
       TargetErrorType.Error1,
@@ -43,6 +53,9 @@ const matchErrorMsg = <T>(message: T) => {
       TargetErrorType.Error6,
       TargetErrorType.Error7,
       TargetErrorType.Error8,
+      TargetErrorType.Error9,
+      TargetErrorType.Error10,
+      TargetErrorType.Error11,
     ];
 
     for (let index = 0; index < sourceErrors.length; index++) {

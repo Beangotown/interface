@@ -62,7 +62,7 @@
     @apply text-base leading-6 md:text-[24px] font-bold;
   }
   .nft__pic {
-    @apply flex justify-center items-center;
+    @apply flex justify-center items-center relative;
     .left-icon,
     .right-icon {
       @apply md:w-10 md:h-10 rounded-[50%] md:border-[2px] border-[1.234px] border-solid border-[#244cbd] flex items-center justify-center w-[25px] h-[25px];

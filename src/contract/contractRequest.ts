@@ -1,6 +1,7 @@
 import { WalletType } from 'constants/index';
 import { IPortkeyContract, getContractBasic } from '@portkey/contracts';
 import { ChainId, IContract, SendOptions } from '@portkey/types';
+import { MethodsWallet } from '@portkey/provider-types';
 import { did } from '@portkey/did-ui-react';
 
 import { CallContractParams, IDiscoverInfo, PortkeyInfoType, WalletInfoType } from 'types';
@@ -9,13 +10,17 @@ import { aelf, sleep } from '@portkey/utils';
 import { getTxResultRetry } from 'utils/getTxResult';
 import DetectProvider from 'utils/InstanceProvider';
 import { Manager } from '@portkey/services';
+import { store } from 'redux/store';
 import { SECONDS_60 } from 'constants/time';
 import { MethodType, SentryMessageType, captureMessage } from 'utils/captureMessage';
+import getAccountInfoSync from 'utils/getAccountInfoSync';
+import { compareVersion } from 'utils/version';
 
 interface IContractConfig {
   chainId: ChainId;
   rpcUrl?: string;
   contractAddress: string;
+  discoverRpcUrl?: string;
 }
 
 interface IWallet {
@@ -53,8 +58,10 @@ export default class ContractRequest {
   }
 
   public setConfig(config: IContractConfig) {
+    const { info } = store.getState();
     this.chainId = config.chainId;
-    this.rpcUrl = config.rpcUrl;
+    const rpcUrl = info.walletType === WalletType.discover ? config.discoverRpcUrl : config.rpcUrl;
+    this.rpcUrl = rpcUrl;
     this.initCaContract(config.contractAddress);
   }
 
@@ -75,6 +82,7 @@ export default class ContractRequest {
       this.walletType = walletType;
       if (walletType === WalletType.discover) {
         this.wallet.discoverInfo = wallet.discoverInfo;
+        this.caAddress = wallet.discoverInfo?.address;
       } else {
         this.wallet.portkeyInfo = wallet.portkeyInfo;
       }
@@ -191,8 +199,11 @@ export default class ContractRequest {
             throw new Error(`Account not found in chain: ${this.chainId}`);
           }
           const address = accountsInChain[0];
-          result = await contract?.callSendMethod(params.methodName, address, params.args, sendOptions);
-        } catch (error) {
+          result = await contract?.callSendMethod(params.methodName, address, params.args, {
+            onMethod: 'transactionHash',
+          });
+          console.log(result);
+        } catch (error: any) {
           console.error('=====callSendMethod error', error);
           this.contractCaptureMessage(params, error, MethodType.CALLSENDMETHOD);
           return Promise.reject(error);
@@ -327,6 +338,73 @@ export default class ContractRequest {
     }
   }
 
+  public async getSyncChainStatus() {
+    if (this.walletType === WalletType.discover) {
+      let version = undefined;
+      try {
+        const provider = await DetectProvider.getDetectProvider();
+        if (!provider) throw Error('Provider not found');
+
+        const providerVersion = compareVersion(provider.providerVersion, '0.0.1');
+        version = providerVersion;
+        let syncStatus = false;
+        if (providerVersion > 0) {
+          const status = await provider.request({
+            method: MethodsWallet.GET_WALLET_MANAGER_SYNC_STATUS,
+            payload: { chainId: this.chainId },
+          });
+          syncStatus = !!status;
+        } else {
+          syncStatus = await this.getHolder(this.caAddress!);
+        }
+
+        console.log('=====syncStatus', syncStatus);
+        return syncStatus;
+      } catch (error) {
+        captureMessage({
+          type: SentryMessageType.ERROR,
+          params: {
+            name: 'getSyncChainStatus',
+            method: MethodType.NON,
+            query: {
+              type: 'discover',
+              version,
+            },
+            description: error,
+            walletAddress: this.caAddress,
+          },
+        });
+        console.error('=====getSyncChainStatus error', error);
+        return false;
+      }
+    } else {
+      try {
+        const accountSyncInfo = await getAccountInfoSync(this.chainId!, this.wallet.portkeyInfo);
+        const { holder, filteredHolders } = accountSyncInfo!;
+        if (holder && filteredHolders && filteredHolders.length) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        captureMessage({
+          type: SentryMessageType.ERROR,
+          params: {
+            name: 'getSyncChainStatus',
+            method: MethodType.NON,
+            query: {
+              type: 'SDK',
+            },
+            description: error,
+            walletAddress: this.caAddress,
+          },
+        });
+        console.error('=====getSyncChainStatus error', error);
+        return false;
+      }
+    }
+  }
+
   public async getHolder(caAddress: string) {
     // get caHash
     const rst = await did.services.communityRecovery.getHolderInfoByManager({
@@ -356,6 +434,7 @@ export default class ContractRequest {
 
     const managerInfoStr = JSON.stringify(managerInfo);
     const isSame = managerList.every((item) => JSON.stringify(item) === managerInfoStr);
+
     if (isSame) return true;
     const lastManager = managerInfo.slice(-1)[0].address;
     const isLastManager = managerList.every((item) => item.slice(-1)[0].address === lastManager);

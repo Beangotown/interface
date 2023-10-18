@@ -12,12 +12,14 @@ export enum Severity {
 export enum MethodType {
   CALLSENDMETHOD = 'callSendMethod',
   CALLVIEWMETHOD = 'callViewMethod',
+  NON = 'NON',
 }
 
 export enum SentryMessageType {
   CONTRACT = 'contract',
   HTTP = 'http',
   INFO = 'info',
+  ERROR = 'error',
 }
 interface IParams<T, R> {
   name: string;
