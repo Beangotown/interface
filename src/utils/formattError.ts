@@ -15,7 +15,7 @@ enum SourceErrorType {
   Error11 = 'User close the prompt',
 }
 export enum TargetErrorType {
-  Error1 = 'Not enough BeanPass NFT to start the game',
+  Error1 = "You don't have any BeanPass NFTs in your account.",
   Error2 = 'Not enough GOs to start the game',
   Error3 = 'Invalid operation',
   Error4 = 'Invalid operation',

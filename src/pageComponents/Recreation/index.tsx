@@ -276,6 +276,7 @@ export default function Game() {
       console.log('=====GetBingoReward end');
       setMoving(false);
       setOpen(false);
+      updatePlayerInformation(address);
     }
     setGoLoading(false);
   };
