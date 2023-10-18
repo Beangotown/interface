@@ -51,7 +51,7 @@ export default function GetBeanPassModal({ type, ...props }: BeanPassModalPropsT
         btnText: 'I know',
         contentArr: [
           'You need to have a BeanPass NFT to start the game!',
-          `Since you have already claimed a BeanPass but it's not in your current wallet address now, please transfer it back or obtain a new one from other addresses.`,
+          `Since you have already claimed a BeanPass but it's not in your current wallet address now, please transfer it back or obtain a new one via the Forest NFT marketplace.`,
         ],
       },
       [GetBeanPassStatus.Need]: {
@@ -68,7 +68,7 @@ export default function GetBeanPassModal({ type, ...props }: BeanPassModalPropsT
           return <p key={text}>{text}</p>;
         })}
         {configInfo?.isHalloween && (type === GetBeanPassStatus.Abled || type === GetBeanPassStatus.Recharge) && (
-          <p className="text-[#FEB800]">{`🎃Be mindful! You may get a "Witchy BeanPass" during the Halloween event.`}</p>
+          <p className="text-[#FEB800]">{`🎃Be mindful! You may get a "Witchy BeanPass" during the Halloween campaign.`}</p>
         )}
       </div>
       {displayText.btnText && (

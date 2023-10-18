@@ -61,7 +61,6 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
       if (!ownedArr.length) {
         showMessage.error(TargetErrorType.Error1);
         handleNoneOwned();
-        return;
       } else {
         setMyOpen(true);
         if (curBeanPass) {
@@ -78,7 +77,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
   useEffect(() => {
     if (beanPassList.length) {
       const curUseBeanPass = beanPassList.filter((i) => i.usingBeanPass);
-      curUseBeanPass?.[0] && store.dispatch(setCurBeanPass(curUseBeanPass[0]));
+      store.dispatch(setCurBeanPass(curUseBeanPass.length ? curUseBeanPass[0] : undefined));
     }
   }, [beanPassList]);
 

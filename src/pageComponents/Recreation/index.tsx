@@ -490,7 +490,7 @@ export default function Game() {
                   width={`calc(100% / ${checkerboardData?.[0]?.length})`}
                   translate={translate}
                   bean={score}
-                  opacity={opacity}
+                  opacity={curBeanPass?.symbol ? opacity : 0}
                   position={{
                     x: currentNodeRef.current?.info.row,
                     y: currentNodeRef.current?.info.column,
