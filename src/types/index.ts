@@ -3,6 +3,7 @@ import { Accounts, ChainId } from '@portkey/provider-types';
 import type { Manager } from '@portkey/services';
 import { IBlockchainWallet } from '@portkey/types';
 import { ModalProps } from 'antd';
+import { BeanPassItemType } from 'components/CommonModal/type';
 import { ICheckerboardItem } from 'pageComponents/Recreation/checkerboard';
 import { INoticeModal } from 'redux/reducer/noticeModal';
 
@@ -169,9 +170,7 @@ export interface IBeanPassClaimRes {
   claimable: boolean;
   reason: BeanPassResons;
   transactionId: string;
-  symbol: string;
-  name: string;
-  nftImageUrl: string;
+  beanPassInfoDto: BeanPassItemType;
 }
 
 export interface IBeanPassClaimReq {

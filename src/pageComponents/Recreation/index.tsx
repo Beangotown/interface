@@ -77,7 +77,7 @@ export default function Game() {
     curBeanPass,
   } = useGetState();
 
-  const [beanPassItem, setBeanPassItem] = useState<BeanPassItemType>();
+  const [beanPassInfoDto, setBeanPassInfoDto] = useState<BeanPassItemType>();
 
   const firstNode = checkerboardData![5][4];
   const firstNodePosition: [number, number] = [5, 4];
@@ -336,17 +336,13 @@ export default function Game() {
       const getNFTRes = await receiveBeanPassNFT({
         caAddress: address,
       });
-      const { claimable, reason, transactionId, symbol, nftImageUrl, name } = getNFTRes;
+      const { claimable, reason, transactionId, beanPassInfoDto } = getNFTRes;
       if (!claimable) {
         showMessage.error(reason);
         return;
       }
       setBeanPassModalVisible(false);
-      setBeanPassItem({
-        symbol,
-        nftImageUrl,
-        tokenName: name,
-      });
+      setBeanPassInfoDto(beanPassInfoDto);
       setNFTModalType(ShowBeanPassType.Success);
 
       await sleep(configInfo?.stepUpdateDelay || 3000);
@@ -587,7 +583,7 @@ export default function Game() {
 
         <ShowNFTModal
           open={isShowNFT}
-          beanPassItem={beanPassItem}
+          beanPassItem={beanPassInfoDto}
           onCancel={onShowNFTModalCancel}
           type={nftModalType}
         />

@@ -13,9 +13,9 @@ export enum ShowBeanPassType {
 }
 
 export type BeanPassItemType = {
+  nftImageUrl: string;
   symbol: string;
   tokenName: string;
-  nftImageUrl: string;
 };
 
 export type ShowNFTModalPropsType = {
