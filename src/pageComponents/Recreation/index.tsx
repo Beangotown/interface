@@ -442,14 +442,6 @@ export default function Game() {
 
   const onNftClick = async () => {
     if (hasNft) {
-      const beanPassList = await fetchBeanPassList({ caAddress: address });
-      const ownedArr = beanPassList.filter((i) => i.owned);
-      if (!ownedArr.length) {
-        showMessage.error(TargetErrorType.Error1);
-        initCheckBeanPass();
-        updatePlayerInformation(address);
-        return;
-      }
       setNFTModalType(ShowBeanPassType.Display);
       setIsShowNFT(true);
     } else {

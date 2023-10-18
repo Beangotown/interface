@@ -20,6 +20,8 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
 
   const address = useAddress();
 
+  const [myOpen, setMyOpen] = useState(false);
+
   const [curNftIndex, setCurNftIndex] = useState(0);
 
   const [beanPassList, setBeanPassList] = useState<Array<IBeanPassListItem>>([]);
@@ -61,6 +63,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
         handleNoneOwned();
         return;
       } else {
+        setMyOpen(true);
         if (curBeanPass) {
           const curBeanPassFilter = beanPassList.filter((i) => i.symbol === curBeanPass.symbol);
           if (curBeanPassFilter.length && !curBeanPassFilter[0].owned) {
@@ -97,14 +100,23 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
   useEffect(() => {
     if (!open) {
       setCurNftIndex(0);
+      setMyOpen(false);
     }
   }, [open]);
 
   useEffect(() => {
-    if (open && type === ShowBeanPassType.Display) {
-      address && initBeanPassList();
+    if (open) {
+      if (type === ShowBeanPassType.Display) {
+        address && initBeanPassList();
+      } else {
+        setMyOpen(true);
+      }
     }
   }, [address, type, open]);
+
+  useEffect(() => {
+    address && initBeanPassList();
+  }, [address]);
 
   const handleUse = async () => {
     if (curNft?.owned) {
@@ -133,7 +145,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
     <Modal
       destroyOnClose
       className={styles.showBeanPassModal}
-      open={open}
+      open={myOpen}
       title={type !== ShowBeanPassType.Display ? 'BeanPass NFT' : 'Congratulations'}
       onCancel={onCancel}>
       {type === ShowBeanPassType.Display ? (
