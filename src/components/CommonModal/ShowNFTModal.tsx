@@ -96,6 +96,12 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
   }, [initBeanPassList, open]);
 
   useEffect(() => {
+    if (!open) {
+      setCurNftIndex(0);
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (type === ShowBeanPassType.Display) {
       address && initBeanPassList();
     }
