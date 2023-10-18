@@ -23,7 +23,7 @@ import useGetState from 'redux/state/useGetState';
 import RecreationModal, { RecreationModalType } from './components/RecreationModal';
 import { useDebounce, useDeepCompareEffect, useEffectOnce, useWindowSize } from 'react-use';
 import { CheckBeanPass, GetBingoReward } from 'contract/bingo';
-import { GetBeanPassStatus, ShowBeanPassType } from 'components/CommonModal/type';
+import { BeanPassItemType, GetBeanPassStatus, ShowBeanPassType } from 'components/CommonModal/type';
 import GetBeanPassModal from 'components/CommonModal/GetBeanPassModal';
 import { useAddress } from 'hooks/useAddress';
 import { useRouter } from 'next/navigation';
@@ -38,8 +38,6 @@ import CountDownModal from 'components/CommonModal/CountDownModal';
 import { store } from 'redux/store';
 import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
-import roleCommon from 'assets/base64/role';
-import roleHalloween from 'assets/base64/roleHalloween';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getTxResultRetry } from 'utils/getTxResult';
 import { ChainId } from '@portkey/types';
@@ -48,6 +46,7 @@ import BoardRight from './components/BoardRight';
 import { SECONDS_60 } from 'constants/time';
 import NoticeModal from 'components/NoticeModal';
 import { getModalInfo } from './utils/getModalInfo';
+import { DEFAULT_SYMBOL, RoleImg } from 'constants/role';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -75,14 +74,10 @@ export default function Game() {
     curChessboardNode,
     needSync,
     checkerboardCounts,
+    curBeanPass,
   } = useGetState();
 
-  const roleImg = useMemo(() => {
-    return {
-      common: roleCommon,
-      halloween: roleHalloween,
-    }['halloween'];
-  }, []);
+  const [beanPassInfoDto, setBeanPassInfoDto] = useState<BeanPassItemType>();
 
   const firstNode = checkerboardData![5][4];
   const firstNodePosition: [number, number] = [5, 4];
@@ -341,12 +336,13 @@ export default function Game() {
       const getNFTRes = await receiveBeanPassNFT({
         caAddress: address,
       });
-      const { claimable, reason, transactionId } = getNFTRes;
+      const { claimable, reason, transactionId, beanPassInfoDto } = getNFTRes;
       if (!claimable) {
         showMessage.error(reason);
         return;
       }
       setBeanPassModalVisible(false);
+      setBeanPassInfoDto(beanPassInfoDto);
       setNFTModalType(ShowBeanPassType.Success);
 
       await sleep(configInfo?.stepUpdateDelay || 3000);
@@ -496,7 +492,7 @@ export default function Game() {
                   showAdd={showAdd}
                   hideAdd={hideAdd}>
                   {/* <Lottie lottieRef={animationRef} animationData={dataAnimation} /> */}
-                  <img className="w-full h-full" src={roleImg} alt="role" />
+                  <img className="w-full h-full" src={RoleImg[curBeanPass?.symbol || DEFAULT_SYMBOL]} alt="role" />
                 </Role>
 
                 {checkerboardData?.map((row, index) => {
@@ -585,7 +581,12 @@ export default function Game() {
           onConfirm={handleConfirm}
         />
 
-        <ShowNFTModal open={isShowNFT} onCancel={onShowNFTModalCancel} type={nftModalType} />
+        <ShowNFTModal
+          open={isShowNFT}
+          beanPassItem={beanPassInfoDto}
+          onCancel={onShowNFTModalCancel}
+          type={nftModalType}
+        />
         <CountDownModal
           open={countDownModalOpen}
           onCancel={() => setCountDownModalOpen(false)}

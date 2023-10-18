@@ -11,6 +11,7 @@ import { useAddress } from 'hooks/useAddress';
 import { IBeanPassListItem } from 'types';
 import { store } from 'redux/store';
 import { setCurBeanPass } from 'redux/reducer/info';
+import { qualityBlue } from 'constants/nft';
 import showMessage from 'utils/setGlobalComponentsInfo';
 
 export default function ShowNftModal({ type, onCancel, open, beanPassItem }: ShowNFTModalPropsType) {
@@ -119,6 +120,13 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
     }
   };
 
+  const getCongratulationsMsg = () => {
+    if (beanPassItem?.symbol && qualityBlue.includes(beanPassItem?.symbol)) {
+      return `Congratulations! You've got a rare "${beanPassItem?.tokenName}" BeanPass NFT.`;
+    }
+    return `Congratulations! You now have a "${beanPassItem?.tokenName}" BeanPass NFT.`;
+  };
+
   return (
     <Modal
       destroyOnClose
@@ -192,7 +200,9 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem }: Sho
           <div className="mx-auto h-[160px] w-[160px] md:mt-0 md:h-[240px]  md:w-[240px] relative">
             <img src={beanPassItem?.nftImageUrl || ''} alt="" className="w-full h-full" />
           </div>
-          <div className="md:text-[24px] text-base md:leading-[32px] leading-[24px] font-bold md:mt-[35px] mt-[24px] md:mb-[28px]">{`Congratulations! You've got a rare "Witchy Bean" BeanPass NFT.`}</div>
+          <div className="md:text-[24px] text-base md:leading-[32px] leading-[24px] font-bold md:mt-[35px] mt-[24px] md:mb-[28px]">
+            {getCongratulationsMsg()}
+          </div>
         </>
       )}
     </Modal>
