@@ -53,8 +53,12 @@ export const fetchConfigItems = async (): Promise<IConfigResponse> => {
   return cmsRequest.get<IConfigResponse>('items/config');
 };
 
-export const fetchChessboardData = async (): Promise<IChessboardDataResponse> => {
-  return cmsRequest.get<IChessboardDataResponse>('items/chessboard_data');
+export const fetchChessboardData = async (url?: string): Promise<IChessboardDataResponse> => {
+  return cmsRequest.get<IChessboardDataResponse>(`items/${url}` || 'items/chessboard_data');
+};
+
+export const fetchChessboardConfig = async (): Promise<{ data: Record<string, [string, string]> }> => {
+  return cmsRequest.get<{ data: Record<string, [string, string]> }>('items/chessboard_config');
 };
 
 export const fetchNoticeModal = async (): Promise<INoticeModalResponse> => {
