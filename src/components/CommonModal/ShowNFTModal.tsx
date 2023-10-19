@@ -145,7 +145,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
       destroyOnClose
       className={styles.showBeanPassModal}
       open={myOpen}
-      title={type !== ShowBeanPassType.Display ? 'BeanPass NFT' : 'Congratulations'}
+      title={type === ShowBeanPassType.Display ? 'BeanPass NFT' : 'Congratulations'}
       onCancel={onCancel}>
       {type === ShowBeanPassType.Display ? (
         <>
@@ -158,18 +158,14 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
               </div>
             )}
 
-            <div className="mx-auto h-[160px] w-[160px] md:mt-0 md:h-[240px]  md:w-[240px] relative">
-              <Carousel afterChange={onChange} dots={false} ref={carousel}>
+            <div className="mx-auto h-[160Px] w-[160Px] md:mt-0 md:h-[240Px]  md:w-[240Px] relative">
+              <Carousel afterChange={onChange} dots={false} ref={carousel} className="h-full w-full">
                 {beanPassList.map((item, index) => {
                   return (
                     <div className="relative" key={index}>
-                      <img
-                        src={item.nftImageUrl || ''}
-                        alt=""
-                        className="h-[160px] w-[160px] md:h-[240px]  md:w-[240px]"
-                      />
+                      <img src={item.nftImageUrl || ''} alt="" className="h-full w-full" />
                       {!item.owned && (
-                        <div className="h-[160px] w-[160px] md:h-[240px]  md:w-[240px] flex justify-center items-center absolute top-0 left-0 bg-[#3989FF] opacity-70">
+                        <div className="h-full w-full flex justify-center items-center absolute top-0 left-0 bg-[#3989FF] opacity-70">
                           <img
                             src={require('assets/images/icon-lock.png').default.src}
                             alt=""
