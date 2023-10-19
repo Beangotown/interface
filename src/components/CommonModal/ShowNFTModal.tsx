@@ -158,7 +158,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
               </div>
             )}
 
-            <div className="mx-auto h-[160Px] w-[160Px] md:mt-0 md:h-[240Px]  md:w-[240Px] relative">
+            <div className="mx-auto h-[160Px] w-[160Px] xl:mt-0 xl:h-[240Px]  xl:w-[240Px] relative">
               <Carousel afterChange={onChange} dots={false} ref={carousel} className="h-full w-full">
                 {beanPassList.map((item, index) => {
                   return (
