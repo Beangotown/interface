@@ -22,11 +22,12 @@ import { fetchChessboardConfig, fetchChessboardData, fetchConfigItems, fetchNoti
 import { setConfigInfo } from 'redux/reducer/configInfo';
 import { setChessboardData } from 'redux/reducer/chessboardData';
 import { setNoticeModal } from 'redux/reducer/noticeModal';
+import { convertToUtcTimestamp } from 'hooks/useCountDown';
 
 export const isCurrentTimeInterval = (date: [string, string]) => {
   const startTime = new Date(date[0]).getTime();
   const endTime = new Date(date[1]).getTime();
-  const now = new Date().getTime();
+  const now = convertToUtcTimestamp(new Date().getTime());
 
   if (now >= startTime && now <= endTime) {
     return true;
