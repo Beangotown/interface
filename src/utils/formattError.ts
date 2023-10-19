@@ -75,15 +75,15 @@ const matchErrorMsg = <T>(message: T) => {
 export const formatErrorMsg = (result: IContractError) => {
   let resError: IContractError = result;
 
-  if (result.message) {
+  if (result?.message) {
     resError = {
       ...result,
-      error: result.code,
+      error: result?.code,
       errorMessage: {
         message: result.message,
       },
     };
-  } else if (result.Error) {
+  } else if (result?.Error) {
     resError = {
       ...result,
       error: '401',
@@ -91,8 +91,8 @@ export const formatErrorMsg = (result: IContractError) => {
         message: JSON.stringify(result.Error).replace('AElf.Sdk.CSharp.AssertionException: ', ''),
       },
     };
-  } else if (typeof result.error !== 'number' && typeof result.error !== 'string') {
-    if (result.error?.message) {
+  } else if (typeof result?.error !== 'number' && typeof result?.error !== 'string') {
+    if (result?.error?.message) {
       resError = {
         ...result,
         error: '401',
@@ -103,7 +103,7 @@ export const formatErrorMsg = (result: IContractError) => {
     }
   }
 
-  const errorMessage = resError.errorMessage?.message;
+  const errorMessage = resError?.errorMessage?.message;
 
   return {
     ...resError,

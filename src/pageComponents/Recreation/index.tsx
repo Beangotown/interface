@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Leaderboard from 'components/Leaderboard';
 
@@ -14,8 +14,6 @@ import SideBorder from './components/SideBorder';
 import Role from './components/Role';
 
 import Bus from 'assets/images/recreation/bus.svg';
-import Grave from 'assets/images/recreation/grave.svg';
-import Fence from 'assets/images/recreation/fence.svg';
 import Board from './components/Board';
 import GoButton, { Status } from './components/GoButton';
 import { ANIMATION_DURATION } from 'constants/animation';
@@ -27,7 +25,7 @@ import { BeanPassItemType, GetBeanPassStatus, ShowBeanPassType } from 'component
 import GetBeanPassModal from 'components/CommonModal/GetBeanPassModal';
 import { useAddress } from 'hooks/useAddress';
 import { useRouter } from 'next/navigation';
-import { fetchBeanPassList, getBeanPassClaimClaimable, receiveBeanPassNFT } from 'api/request';
+import { getBeanPassClaimClaimable, receiveBeanPassNFT } from 'api/request';
 import useWebLogin from 'hooks/useWebLogin';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import BoardLeft from './components/BoardLeft';
@@ -36,7 +34,7 @@ import { BeanPassResons, IContractError, WalletType } from 'types';
 import ShowNFTModal from 'components/CommonModal/ShowNFTModal';
 import CountDownModal from 'components/CommonModal/CountDownModal';
 import { store } from 'redux/store';
-import { TargetErrorType, formatErrorMsg } from 'utils/formattError';
+import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getTxResultRetry } from 'utils/getTxResult';
@@ -272,7 +270,7 @@ export default function Game() {
     } catch (error) {
       console.error('=====error', error);
       const resError = error as IContractError;
-      showMessage.error(formatErrorMsg(resError).errorMessage?.message);
+      showMessage.error(formatErrorMsg(resError)?.errorMessage?.message);
       console.log('=====GetBingoReward end');
       setMoving(false);
       setOpen(false);
@@ -525,9 +523,15 @@ export default function Game() {
                   className={`absolute left-0 w-full flex ${
                     isMobile ? 'h-[112px] bottom-[-46px] pl-[10px]' : 'h-[212px] bottom-[-76px] pl-[28px]'
                   }`}>
-                  <Grave className={`${isMobile ? 'h-[94.5px] w-auto' : 'h-[185px] w-auto'}`} />
-                  <Fence
+                  <img
+                    className={`${isMobile ? 'h-[94.5px] w-auto' : 'h-[185px] w-auto'}`}
+                    src={require('assets/images/recreation/grave.png').default.src}
+                    alt=""
+                  />
+                  <img
                     className={`absolute bottom-0 right-[8px] ${isMobile ? 'h-[46px] w-auto' : 'h-[76px] w-auto'}`}
+                    src={require('assets/images/recreation/fence.png').default.src}
+                    alt=""
                   />
                 </div>
               ) : (

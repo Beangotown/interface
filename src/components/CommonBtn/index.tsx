@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 import styles from './style.module.css';
 
 interface ICommonBtnProps {
-  title?: string;
+  title?: string | React.ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement> | undefined;
   className?: string;
 }
