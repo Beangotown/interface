@@ -398,11 +398,6 @@ export default function Game() {
   useEffectOnce(() => {
     showMessage.loading();
 
-    getModalInfo({
-      isHalloween: configInfo?.isHalloween,
-      caAddress: address,
-    });
-
     setResetStart(chessboardResetStart);
     setTotalStep(chessboardTotalStep);
     currentNodeRef.current = curChessboardNode;
@@ -414,6 +409,15 @@ export default function Game() {
       }, 25);
     }
   });
+
+  useEffect(() => {
+    if (address) {
+      getModalInfo({
+        isHalloween: configInfo?.isHalloween,
+        caAddress: address,
+      });
+    }
+  }, [address]);
 
   useDeepCompareEffect(() => {
     setPlayableCount(playerInfo?.playableCount || 0);

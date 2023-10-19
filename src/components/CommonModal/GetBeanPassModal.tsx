@@ -68,7 +68,7 @@ export default function GetBeanPassModal({ type, ...props }: BeanPassModalPropsT
           return <p key={text}>{text}</p>;
         })}
         {configInfo?.isHalloween && (type === GetBeanPassStatus.Abled || type === GetBeanPassStatus.Recharge) && (
-          <p className="text-[#FEB800]">{`🎃Be mindful! You may get a "Witchy BeanPass" during the Halloween event.`}</p>
+          <p className="text-[#FEB800]">{`🎃Be mindful! You may get a "Witchy BeanPass" during the Halloween campaign.`}</p>
         )}
       </div>
       {displayText.btnText && (
