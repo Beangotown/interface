@@ -61,7 +61,7 @@ function getCountDown(resetHours: number) {
   };
 }
 
-function convertToUtcTimestamp(timestamp: number) {
+export function convertToUtcTimestamp(timestamp: number) {
   const date = new Date(timestamp);
   const offset = date.getTimezoneOffset() * 60 * MILLISECOND_CONVERT_SECOND;
 
