@@ -19,7 +19,7 @@
     "@headlessui/react": "^1.7.16",
     "@portkey/contracts": "^1.3.0-alpha.1",
     "@portkey/did-ui-react": "1.4.4-alpha.5",
-    "@portkey/detect-provider": "1.1.0-alpha.5",
+    "@portkey/detect-provider": "1.0.1-alpha.0",
     "@portkey/onboarding": "^1.4.3",
     "@portkey/provider-types": "1.0.1-alpha.0",
     "@portkey/types": "^1.3.0-alpha.1",
