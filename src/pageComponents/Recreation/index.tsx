@@ -29,11 +29,11 @@ import { getBeanPassClaimClaimable, receiveBeanPassNFT } from 'api/request';
 import useWebLogin from 'hooks/useWebLogin';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import BoardLeft from './components/BoardLeft';
-import { setPlayerInfo } from 'redux/reducer/info';
+import { setCurBeanPass, setPlayerInfo } from 'redux/reducer/info';
 import { BeanPassResons, IContractError, WalletType } from 'types';
 import ShowNFTModal from 'components/CommonModal/ShowNFTModal';
 import CountDownModal from 'components/CommonModal/CountDownModal';
-import { store } from 'redux/store';
+import { dispatch, store } from 'redux/store';
 import { formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
@@ -45,6 +45,7 @@ import { SECONDS_60 } from 'constants/time';
 import NoticeModal from 'components/NoticeModal';
 import { getModalInfo } from './utils/getModalInfo';
 import { DEFAULT_SYMBOL, RoleImg } from 'constants/role';
+import { getBeanPassModalType } from './utils/getBeanPassModalType';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -280,33 +281,11 @@ export default function Game() {
   };
 
   const checkBeanPassStatus = useCallback(async () => {
-    let beanPassClaimClaimableRes;
-    try {
-      beanPassClaimClaimableRes = await getBeanPassClaimClaimable({
-        caAddress: address,
-      });
-      console.log('BeanPassClaimClaimableRes', beanPassClaimClaimableRes);
-      showMessage.hideLoading();
-    } catch (err) {
-      showMessage.hideLoading();
-      console.log('checkBeanPassStatusError:', err);
-      return;
+    const res = await getBeanPassModalType({ address });
+    if (res) {
+      setBeanPassModalType(res);
+      setBeanPassModalVisible(true);
     }
-    if (!beanPassClaimClaimableRes) return;
-    const { claimable, reason } = beanPassClaimClaimableRes;
-
-    if (claimable) {
-      setBeanPassModalType(GetBeanPassStatus.Abled);
-    } else {
-      if (reason === BeanPassResons.Claimed) {
-        setBeanPassModalType(GetBeanPassStatus.Noneleft);
-      } else if (reason === BeanPassResons.InsufficientElfAmount) {
-        setBeanPassModalType(GetBeanPassStatus.Recharge);
-      } else if (reason === BeanPassResons.DoubleClaim) {
-        setBeanPassModalType(GetBeanPassStatus.Notfound);
-      }
-    }
-    setBeanPassModalVisible(true);
   }, [address]);
 
   const initCheckBeanPass = useCallback(async () => {
@@ -354,7 +333,15 @@ export default function Game() {
           reNotexistedCount: 5,
         });
         updatePlayerInformation(address);
+        setBeanPassInfoDto(beanPassInfoDto);
         setIsShowNFT(true);
+        dispatch(
+          setCurBeanPass({
+            ...beanPassInfoDto,
+            owned: true,
+            usingBeanPass: true,
+          }),
+        );
       } catch (error) {
         /* empty */
       }

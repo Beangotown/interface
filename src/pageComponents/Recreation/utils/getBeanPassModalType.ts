@@ -9,7 +9,7 @@ interface IProps {
 
 export const getBeanPassModalType = async ({ address }: IProps) => {
   let beanPassClaimClaimableRes;
-  let beanPassModalType = undefined;
+  let beanPassModalType = GetBeanPassStatus.Abled;
   try {
     beanPassClaimClaimableRes = await getBeanPassClaimClaimable({
       caAddress: address,
@@ -19,9 +19,9 @@ export const getBeanPassModalType = async ({ address }: IProps) => {
   } catch (err) {
     showMessage.hideLoading();
     console.log('checkBeanPassStatusError:', err);
-    return;
+    return false;
   }
-  if (!beanPassClaimClaimableRes) return;
+  if (!beanPassClaimClaimableRes) return false;
   const { claimable, reason } = beanPassClaimClaimableRes;
 
   if (claimable) {
