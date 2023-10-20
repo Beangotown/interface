@@ -14,6 +14,7 @@ import { setCurBeanPass } from 'redux/reducer/info';
 import { qualityBlue } from 'constants/nft';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import { TargetErrorType } from 'utils/formattError';
+import { CarouselRef } from 'antd/lib/carousel';
 
 export default function ShowNftModal({ type, onCancel, open, beanPassItem, handleNoneOwned }: ShowNFTModalPropsType) {
   const { configInfo, curBeanPass } = useGetState();
@@ -44,14 +45,14 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
     return beanPassList[curNftIndex];
   }, [beanPassList, curNftIndex]);
 
-  const carousel = useRef(null);
+  const carousel = useRef<CarouselRef | null>(null);
 
   const handlePrev = () => {
-    carousel.current && (carousel.current as any).prev();
+    carousel.current && carousel.current.prev();
   };
 
   const handleNext = () => {
-    carousel.current && (carousel.current as any).next();
+    carousel.current && carousel.current.next();
   };
 
   const initBeanPassList = useCallback(async () => {
