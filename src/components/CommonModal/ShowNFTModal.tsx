@@ -93,6 +93,9 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
         setShowLeftToggle(true);
         setShowRightToggle(true);
       }
+    } else {
+      setShowLeftToggle(false);
+      setShowRightToggle(false);
     }
   }, [beanPassList, curNftIndex]);
 
