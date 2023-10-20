@@ -196,7 +196,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
             )}
           </div>
           {curNft?.usingBeanPass ? (
-            <div className={styles['text__inuse']}>In Use Now</div>
+            <div className={styles['text__inuse']}>In Use</div>
           ) : (
             <CommonBtn
               onClick={handleUse}
