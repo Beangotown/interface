@@ -357,8 +357,6 @@ export default class ContractRequest {
         } else {
           syncStatus = await this.getHolder(this.caAddress!);
         }
-
-        console.log('=====syncStatus', syncStatus);
         return syncStatus;
       } catch (error) {
         captureMessage({

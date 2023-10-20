@@ -12,6 +12,7 @@ import { dispatch } from 'redux/store';
 import { toggleShowLeaderboard } from 'redux/reducer/info';
 import useInitLeaderBoard from 'components/Leaderboard/hooks/useInitLeaderBoard';
 import showMessage from 'utils/setGlobalComponentsInfo';
+import { SentryMessageType, captureMessage } from 'utils/captureMessage';
 
 interface IBoard extends IGoButton {
   onNftClick?: () => void;
@@ -29,14 +30,21 @@ function Board({
 }: IBoard) {
   const { isMobile, playerInfo } = useGetState();
 
-  const { initStart } = useInitLeaderBoard();
+  const { initialize } = useInitLeaderBoard();
 
   const handleShowLeaderboard = async () => {
     showMessage.loading();
     try {
-      await initStart();
+      await initialize();
     } catch (err) {
-      console.error(err);
+      captureMessage({
+        type: SentryMessageType.ERROR,
+        params: {
+          name: 'useInitLeaderBoard',
+          method: 'get',
+          description: err,
+        },
+      });
     } finally {
       showMessage.hideLoading();
       dispatch(toggleShowLeaderboard());

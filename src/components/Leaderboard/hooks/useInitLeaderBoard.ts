@@ -9,7 +9,7 @@ export default function useInitLeaderBoard() {
   const { mutate } = useSWRConfig();
   const address = useAddressWithPrefixSuffix();
 
-  const initStart = useCallback(async () => {
+  const initialize = useCallback(async () => {
     if (!address) return;
     let data;
     const weekRank = await getWeekRank({
@@ -36,6 +36,6 @@ export default function useInitLeaderBoard() {
   }, [address, mutate]);
 
   return {
-    initStart,
+    initialize,
   };
 }

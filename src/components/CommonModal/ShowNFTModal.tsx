@@ -67,7 +67,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
         if (curBeanPass) {
           const curBeanPassFilter = beanPassList.filter((i) => i.symbol === curBeanPass.symbol);
           if (curBeanPassFilter.length && !curBeanPassFilter[0].owned) {
-            showMessage.error('This BeanPass NFT is currently not in your account.');
+            showMessage.error(TargetErrorType.Error12);
           }
         }
       }
@@ -127,7 +127,6 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
         caAddress: address,
         symbol: curNft.symbol,
       });
-      console.log(res);
       initBeanPassList();
     } else {
       window.open(

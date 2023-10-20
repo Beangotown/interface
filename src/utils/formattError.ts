@@ -26,6 +26,7 @@ export enum TargetErrorType {
   Error9 = USER_REJECTED,
   Error10 = USER_REJECTED,
   Error11 = USER_REJECTED,
+  Error12 = 'This BeanPass NFT is currently not in your account.',
   Default = 'Please check your internet connection and try again.',
 }
 
