@@ -1,4 +1,5 @@
 .noticeModal {
+  @apply !w-fit;
   :global(.ant-modal-body) {
     @apply md:!pb-[37.5px];
   }
