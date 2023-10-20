@@ -46,6 +46,7 @@ import NoticeModal from 'components/NoticeModal';
 import { getModalInfo } from './utils/getModalInfo';
 import { DEFAULT_SYMBOL, RoleImg } from 'constants/role';
 import { getBeanPassModalType } from './utils/getBeanPassModalType';
+import { setNoticeModal } from 'redux/reducer/noticeModal';
 
 export default function Game() {
   const [translate, setTranslate] = useState<{
@@ -280,8 +281,24 @@ export default function Game() {
     setGoLoading(false);
   };
 
+  const doubleClaimCallback = () => {
+    dispatch(
+      setNoticeModal({
+        onCancel: () => {
+          dispatch(
+            setNoticeModal({
+              open: false,
+            }),
+          );
+          setBeanPassModalType(GetBeanPassStatus.Notfound);
+          setBeanPassModalVisible(true);
+        },
+      }),
+    );
+  };
+
   const checkBeanPassStatus = useCallback(async () => {
-    const res = await getBeanPassModalType({ address });
+    const res = await getBeanPassModalType({ address, doubleClaimCallback });
     if (res) {
       setBeanPassModalType(res);
       setBeanPassModalVisible(true);
