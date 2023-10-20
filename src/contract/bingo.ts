@@ -4,7 +4,9 @@ import { formatErrorMsg } from 'utils/formattError';
 import { store } from 'redux/store';
 import { sleep } from 'utils/common';
 import checkSynchronization from 'utils/checkSynchronization';
-import { getTxResult, getTxResultOnce } from 'utils/getTxResult';
+import { getTxResultOnce, getTxResultRetry } from 'utils/getTxResult';
+import { SECONDS_60 } from 'constants/time';
+import { ChainId } from '@portkey/types';
 const { configInfo } = store.getState();
 
 export enum ContractMethodType {
@@ -129,7 +131,12 @@ export const Play = async ({
     result = txResult;
     if (['pending', 'notexisted'].includes(status)) {
       await sleep(500);
-      const finalTxRes = await getTxResult(transactionId!, chainId!, 0, rpcUrl!);
+      const finalTxRes = await getTxResultRetry({
+        TransactionId: transactionId!,
+        chainId: chainId as ChainId,
+        rpcUrl: rpcUrl!,
+        rePendingEnd: new Date().getTime() + SECONDS_60,
+      });
       result = finalTxRes.txResult;
     }
 
