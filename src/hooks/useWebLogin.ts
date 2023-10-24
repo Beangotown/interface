@@ -344,6 +344,10 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       InstanceProvider.setWalletInfoInstance({
         discoverInfo: walletInfo,
       });
+      trackLoginInfo({
+        caAddress: (walletInfo as IDiscoverInfo).address!,
+        caHash: '',
+      });
       store.dispatch(setLoginStatus(LoginStatus.LOGGED));
     } else if (type === WalletType.portkey) {
       did.save((walletInfo as PortkeyInfoType)?.pin || '', KEY_NAME);
