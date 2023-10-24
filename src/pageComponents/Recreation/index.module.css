@@ -16,4 +16,8 @@
   .game__content {
     @apply bg-gradient-to-t from-[#1D628B] to-[#14436E];
   }
+
+  .scrollbar::-webkit-scrollbar {
+    @apply !w-0;
+  }
 }

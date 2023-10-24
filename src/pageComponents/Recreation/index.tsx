@@ -488,7 +488,7 @@ export default function Game() {
           } ${configInfo?.isHalloween && '!bg-[url(/images/recreation/checkerboard-bg.svg)] bg-cover'}`}>
           {isMobile && <Board hasNft={hasNft} onNftClick={onNftClick} />}
           <SideBorder side="left" />
-          <div className="w-full overflow-y-auto overflow-x-hidden">
+          <div className={`w-full overflow-y-auto overflow-x-hidden ${styles.scrollbar}`}>
             <div className={`relative flex-1 pl-[16px] ${isMobile ? 'pt-[41px]' : 'pt-[80px]'}`}>
               <div className="relative z-[30]">
                 <Role

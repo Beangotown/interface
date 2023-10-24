@@ -7,6 +7,7 @@ import { getDateFormat } from 'utils/getDateFormat';
 import { formatElfValue } from 'utils/formatElfValue';
 import { useSelector, AppState } from 'redux/store';
 import useGetState from 'redux/state/useGetState';
+import openPage from 'utils/openPage';
 
 const explorerSelector = (state: AppState) => state.configInfo.configInfo?.explorerBaseUrl;
 
@@ -25,8 +26,8 @@ const GameRecordItemChild = ({ data, title }: { data: ITransactionInfo | null; t
             <th className="pb-4">{title}</th>
             <th className="pb-4 text-right">
               <a
-                href={`${explorerBaseUrl}${data.transactionId}`}
                 className="text-white underline"
+                onClick={() => openPage(`${explorerBaseUrl}${data.transactionId}`)}
                 target="_blank"
                 rel="noopener noreferrer">
                 View on Explorer

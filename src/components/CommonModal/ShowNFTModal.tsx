@@ -15,6 +15,7 @@ import { qualityBlue } from 'constants/nft';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import { TargetErrorType } from 'utils/formattError';
 import { CarouselRef } from 'antd/lib/carousel';
+import openPage from 'utils/openPage';
 
 export default function ShowNftModal({ type, onCancel, open, beanPassItem, handleNoneOwned }: ShowNFTModalPropsType) {
   const { configInfo, curBeanPass } = useGetState();
@@ -33,7 +34,7 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
 
   const handleJumpExplor = () => {
     if (!curNft?.owned) return;
-    window.open(`${configInfo!.explorerBeanPassUrl}${curNft.symbol}`, '_blank');
+    openPage(`${configInfo!.explorerBeanPassUrl}${curNft.symbol}`);
   };
 
   const onChange = (number: number) => {
@@ -129,10 +130,8 @@ export default function ShowNftModal({ type, onCancel, open, beanPassItem, handl
       });
       initBeanPassList();
     } else {
-      window.open(
-        `${configInfo!.forestNftDetailUrl}${configInfo!.curChain}-${curNft?.symbol}/${configInfo?.curChain}`,
-        '_blank',
-      );
+      const url = `${configInfo!.forestNftDetailUrl}${configInfo!.curChain}-${curNft?.symbol}/${configInfo?.curChain}`;
+      openPage(url);
     }
   };
 

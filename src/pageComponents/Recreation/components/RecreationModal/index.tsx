@@ -131,7 +131,7 @@ function RecreationModal(props: IRecreationModal) {
         <div className={`relative flex items-center justify-center mt-[100px]`}>
           {treasureStatus === TreasureStatus.OPENED ? (
             <div
-              className={`absolute left-0 right-0 z-[40] m-auto ${
+              className={`absolute left-0 right-0 ${configInfo?.isHalloween ? 'z-[51]' : 'z-[40]'}  m-auto ${
                 configInfo?.isHalloween
                   ? isMobile
                     ? 'h-[90px] top-[-90px]'

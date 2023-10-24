@@ -2,6 +2,7 @@ import { getPopup } from 'api/request';
 import { setNoticeModal } from 'redux/reducer/noticeModal';
 import { store, dispatch } from 'redux/store';
 import { SentryMessageType, captureMessage } from 'utils/captureMessage';
+import openPage from 'utils/openPage';
 
 export const getModalInfo = async (props: { isHalloween: boolean | undefined; caAddress: string }) => {
   const { isHalloween, caAddress } = props;
@@ -14,7 +15,7 @@ export const getModalInfo = async (props: { isHalloween: boolean | undefined; ca
         setNoticeModal({
           open: true,
           onOk: () => {
-            if (noticeModalInfo?.url) window.open(noticeModalInfo.url, '_blank');
+            if (noticeModalInfo?.url) openPage(noticeModalInfo.url);
           },
         }),
       );
