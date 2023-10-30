@@ -12,6 +12,7 @@ const checkSynchronization = async (message: string) => {
       return true;
     }
   }
+
   return true;
 };
 
