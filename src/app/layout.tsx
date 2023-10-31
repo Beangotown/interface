@@ -23,6 +23,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
         />
+        <Script src="https://telegram.org/js/telegram-web-app.js" />
         <Script strategy="afterInteractive" id="rem-px">{`
         (function () {
             function initFontSize(doc, win) {
@@ -30,8 +31,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
                 var event = 'onorientationchange' in window ? 'orientationchange' : 'resize';
                 var fn = function () {
                   var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                  var isTgAPP = /isTgAPP/.test(location.search)
                   var width = docEle.clientWidth;
-                  var unitWidth = isMobile ? 390 : 1920;
+                  var unitWidth = isMobile || isTgAPP ? 390 : 1920;
+
+                  console.log('isTgAPP: ', isTgAPP, 'unitWidth: ', unitWidth)
                   if(width){
                     if(isMobile && (width > 580)) {
                       docEle.style.fontSize = '16px'
