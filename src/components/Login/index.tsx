@@ -36,6 +36,7 @@ import { ChainId } from '@portkey/types';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import { Proto } from 'utils/proto';
 import { getProto } from 'utils/deserializeLog';
+import discoverUtils from 'utils/discoverUtils';
 
 const components = {
   phone: PhoneIcon,
@@ -143,6 +144,7 @@ export default function Login() {
   }, [isLock, loginEagerly]);
 
   const handleEmail = () => {
+    discoverUtils.removeDiscoverStorageSign();
     closeModal();
     setStyle(styles.inputForm);
     setDesign('Web2Design');
@@ -161,6 +163,7 @@ export default function Login() {
   };
 
   const handlePhone = () => {
+    discoverUtils.removeDiscoverStorageSign();
     closeModal();
     setStyle(styles.inputForm);
     setDesign('Web2Design');
@@ -171,6 +174,7 @@ export default function Login() {
   };
 
   const handleQrcode = () => {
+    discoverUtils.removeDiscoverStorageSign();
     closeModal();
     setStyle(styles.qrcodeBox);
     setDesign('SocialDesign');
