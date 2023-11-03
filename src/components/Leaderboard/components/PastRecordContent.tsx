@@ -111,7 +111,7 @@ const Table = ({ his }: IData) => {
           <tr key={idx} className="border-b border-white border-opacity-40">
             <td className={`${isMobile ? 'p-2' : 'p-4'}`}>Week-{i.week}</td>
             <td className={`${isMobile ? 'py-2' : 'py-4'}`}>
-              {i.score || <div className="text-white text-opacity-60">N/A</div>}
+              {i.score ?? <div className="text-white text-opacity-60">N/A</div>}
             </td>
             <td className={`${isMobile ? 'p-2' : 'p-4'} text-right`}>{i.rank === -1 ? '-' : i.rank}</td>
           </tr>
