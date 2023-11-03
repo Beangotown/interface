@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation';
 import { NetworkType } from 'constants/index';
 import { sleep } from 'utils/common';
 import { getSyncHolder, trackLoginInfo } from 'utils/trackAddressInfo';
+import discoverUtils from 'utils/discoverUtils';
 
 const KEY_NAME = 'BEANGOTOWN';
 
@@ -171,25 +172,17 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     store.dispatch(setLoginStatus(LoginStatus.UNLOGIN));
     store.dispatch(setWalletType(WalletType.unknown));
     store.dispatch(setPlayerInfo(null));
-    window.localStorage.removeItem(LOGIN_EARGLY_KEY);
+    discoverUtils.removeDiscoverStorageSign();
     router.push('/login');
   }, [router]);
 
-  const checkProviderConnected = useCallback(async () => {
-    if (walletType !== WalletType.discover) {
-      return;
-    }
-    const detectInfo = await detect();
-    if (!detectInfo) return;
-
-    detectInfo.on('disconnected', () => {
-      logout();
-    });
-  }, [detect, logout, walletType]);
-
   useEffect(() => {
-    checkProviderConnected();
-  }, [checkProviderConnected, detect]);
+    if (walletType === WalletType.discover && discoverProvider) {
+      discoverProvider.on('disconnected', () => {
+        logout();
+      });
+    }
+  }, [discoverProvider, walletType]);
 
   useEffect(() => {
     setIsLogin(loginStatus === LoginStatus.LOGGED);
@@ -235,6 +228,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
   }, []);
 
   const handleGoogle = async () => {
+    discoverUtils.removeDiscoverStorageSign();
     setLoading(true);
     const res = await getSocialToken({ type: SocialLoginType.GOOGLE });
     await signHandle.onSocialFinish({
@@ -244,6 +238,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
   };
 
   const handleApple = async () => {
+    discoverUtils.removeDiscoverStorageSign();
     setLoading(true);
     const res = await getSocialToken({ type: SocialLoginType.APPLE });
     await signHandle.onSocialFinish({
@@ -379,9 +374,11 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
   };
 
   const loginEagerly = useCallback(async () => {
+    const provider = await detect();
+    const isConnected = provider.isConnected();
+    if (!isConnected) return;
     setLoading(true);
     try {
-      const provider = await detect();
       const network = await provider.request({ method: 'network' });
       if (network !== Network) {
         console.log('ERR_CODE.NETWORK_TYPE_NOT_MATCH');
@@ -405,7 +402,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       });
       setLoading(false);
     }
-  }, [onAccountsSuccess]);
+  }, [Network, curChain, onAccountsSuccess]);
 
   const getDiscoverSignature = useCallback(
     async (params: SignatureParams) => {
