@@ -94,3 +94,7 @@ button {
 .portkey-ui-wrapper {
   @apply h-full;
 }
+
+.portkey-ant-modal-root .portkey-ant-btn-primary {
+  @apply bg-[#5685ff];
+}
