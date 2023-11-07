@@ -13,6 +13,7 @@ export enum CheckerboardType {
   TREASURE = 'treasure',
   IMAGE = 'image',
   EMPTY = 'empty',
+  START = 'start',
 }
 
 export interface ICheckerboardItem {
@@ -55,6 +56,8 @@ export class CheckerboardList {
   private baseWidth: number;
   private baseHeight: number;
   private animationDuration: number;
+  private premierColumn: number;
+  private premierRow: number;
 
   constructor(props?: { baseWidth?: number; baseHeight?: number; animationDuration?: number }) {
     this.head = null;
@@ -63,6 +66,8 @@ export class CheckerboardList {
     this.baseWidth = props?.baseWidth ?? 60;
     this.baseHeight = props?.baseHeight ?? 60;
     this.animationDuration = props?.animationDuration ?? ANIMATION_DURATION;
+    this.premierColumn = 4;
+    this.premierRow = 5;
   }
 
   private next({
@@ -76,8 +81,8 @@ export class CheckerboardList {
     const firstNode = this.head;
     if (current?.next && firstNode) {
       const nextNode = current.next;
-      const x = (nextNode.info.column - firstNode.info.column) * this.baseWidth;
-      const y = (nextNode.info.row - firstNode.info.row) * this.baseHeight;
+      const x = (nextNode.info.column - this.premierColumn) * this.baseWidth;
+      const y = (nextNode.info.row - this.premierRow) * this.baseHeight;
       this.currentNode = nextNode;
       animation && animation.play();
       this.step -= 1;
@@ -128,8 +133,17 @@ export class CheckerboardList {
     this.baseHeight = baseHeight;
   }
 
-  jump(params: { step: number; animation?: LottieRefCurrentProps; baseWidth?: number; baseHeight?: number }) {
+  jump(params: {
+    step: number;
+    animation?: LottieRefCurrentProps;
+    baseWidth?: number;
+    baseHeight?: number;
+    premierColumn: number;
+    premierRow: number;
+  }) {
     this.step = params.step;
+    this.premierColumn = params.premierColumn;
+    this.premierRow = params.premierRow;
 
     return (callback: (props: IJumpCallbackParams) => void) => {
       this.next({

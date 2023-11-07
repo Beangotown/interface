@@ -57,3 +57,41 @@
 .scrollbar::-webkit-scrollbar {
   @apply !w-0;
 }
+
+.past-record-option {
+  @apply !bg-[#fff];
+
+  :global(.ant-select-item-option-selected) {
+    @apply bg-[var(--color-main)] text-[#fff];
+  }
+
+  :global(.ant-select-item-option-active) {
+    @apply bg-[#144CEA] text-[#fff];
+  }
+  
+  :global(.ant-select-item-option) {
+    @apply text-3xl;
+  }
+}
+
+.past-record-option-mobile {
+  :global(.ant-select-item-option) {
+    @apply text-lg;
+  }
+}
+
+.past-record-select {
+  @apply bg-[#0C40D4] text-white;
+
+  :global(.ant-select-selector) {
+    @apply !bg-transparent !border-transparent !shadow-none;
+  }
+  
+  :global(.ant-select-arrow) {
+    @apply text-[#fff];
+  }
+
+  :global(.ant-select-focused) :global(.ant-select-selector) {
+    @apply border-none;
+  }
+}

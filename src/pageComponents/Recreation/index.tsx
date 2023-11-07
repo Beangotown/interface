@@ -70,12 +70,16 @@ export default function Game() {
     needSync,
     checkerboardCounts,
     curBeanPass,
+    checkerboardStartPosition,
   } = useGetState();
 
   const [beanPassInfoDto, setBeanPassInfoDto] = useState<BeanPassItemType>();
 
-  const firstNode = checkerboardData![5][4];
-  const firstNodePosition: [number, number] = [5, 4];
+  const firstNode = checkerboardData![checkerboardStartPosition[0]][checkerboardStartPosition[1]];
+  const firstNodePosition: [number, number] = [checkerboardStartPosition[0], checkerboardStartPosition[1]];
+  const premierColumn = checkerboardData ? checkerboardData[0].length - 1 : 0;
+  const premierRow = checkerboardData ? checkerboardData.length - 1 : 0;
+
   const linkedList = useRef<CheckerboardList>();
 
   const currentNodeRef = useRef<CheckerboardNode>();
@@ -164,6 +168,8 @@ export default function Game() {
     if (linkedList.current) {
       const next = linkedList.current.jump({
         step,
+        premierColumn,
+        premierRow,
         // animation: animationRef.current!,
         baseWidth: translateRef.current.x,
         baseHeight: translateRef.current.y,
@@ -185,8 +191,10 @@ export default function Game() {
 
   const resetPosition = () => {
     setTranslate({
-      x: ((currentNodeRef.current?.info.column ?? 4) - 4) * translateRef.current.x,
-      y: ((currentNodeRef.current?.info.row ?? 5) - 5) * translateRef.current.y,
+      x:
+        ((currentNodeRef.current?.info.column ?? checkerboardStartPosition[1]) - premierColumn) *
+        translateRef.current.x,
+      y: ((currentNodeRef.current?.info.row ?? checkerboardStartPosition[0]) - premierRow) * translateRef.current.y,
     });
   };
 

@@ -4,6 +4,8 @@ import { useRankingHistory } from '../data/useRankingHistory';
 import { useIsMobile } from 'redux/selector/mobile';
 import { getDateFormat } from 'utils/getDateFormat';
 import { IRankingHistoryResult } from '../data/types';
+import { Select } from 'antd';
+import styles from './style.module.css';
 
 const DiagonalContainer = ({ icon, leftText, value }: { icon: React.ReactNode; leftText: string; value?: number }) => {
   const isMobile = useIsMobile();
@@ -46,7 +48,7 @@ export const PastRecordContent = () => {
   return (
     <div className="mb-2 flex w-full flex-grow flex-col rounded-2xl bg-blue-400 p-2 shadow-inner">
       <div className="mb-[1px] flex w-full flex-row items-center justify-between rounded-tl-2xl rounded-tr-2xl bg-[#0C40D4] p-2 shadow-inner">
-        <select
+        {/* <select
           className={`bg-[#0C40D4] text-white cursor-custom ${isMobile ? 'p-2.5 text-lg' : 'p-2 text-3xl'}`}
           onChange={(e) => setSelectedSeason(e.target.value)}>
           {data?.season.map((i) => (
@@ -54,7 +56,21 @@ export const PastRecordContent = () => {
               {i.name}
             </option>
           ))}
-        </select>
+        </select> */}
+        <Select
+          value={selectedSeason}
+          className={`${styles['past-record-select']} cursor-custom ${
+            isMobile ? 'p-2.5 text-lg w-[max-content]' : 'p-2 text-3xl w-[max-content]'
+          }`}
+          popupClassName={`${styles['past-record-option']} ${isMobile && styles['past-record-option-mobile']}`}
+          onChange={(value) => setSelectedSeason(value)}
+          options={data?.season.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          })}
+        />
         <div className={`font-normal leading-none text-white text-opacity-60 ${isMobile ? 'text-md' : 'text-xl'}`}>
           {dateString}
         </div>

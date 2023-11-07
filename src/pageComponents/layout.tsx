@@ -20,9 +20,10 @@ import { KEY_NAME } from 'constants/platform';
 import { LoginStatus } from 'redux/types/reducerTypes';
 import { fetchChessboardConfig, fetchChessboardData, fetchConfigItems, fetchNoticeModal } from 'api/request';
 import { setConfigInfo } from 'redux/reducer/configInfo';
-import { setChessboardData } from 'redux/reducer/chessboardData';
+import { setCheckerboardCounts, setChessboardData, setStartPosition } from 'redux/reducer/chessboardData';
 import { setNoticeModal } from 'redux/reducer/noticeModal';
 import { convertToUtcTimestamp } from 'hooks/useCountDown';
+import { CheckerboardType } from './Recreation/checkerboard';
 
 export const isCurrentTimeInterval = (date: [string, string]) => {
   const startTime = new Date(date[0]).getTime();
@@ -71,7 +72,18 @@ const Layout = dynamic(
 
           const configPromise = fetchConfigItems();
           const chessBoardPromise = fetchChessboardData(url).then((res) => {
+            let startPosition = [5, 4];
+            const boardCounts: number = res.data.data.flatMap((row, index) =>
+              row.filter((obj, i) => {
+                if (obj.type === CheckerboardType.START) {
+                  startPosition = [index, i];
+                }
+                return obj.arrow;
+              }),
+            ).length;
             store.dispatch(setChessboardData(res.data));
+            store.dispatch(setCheckerboardCounts(boardCounts));
+            store.dispatch(setStartPosition(startPosition));
           });
 
           configPromise.then((res) => {

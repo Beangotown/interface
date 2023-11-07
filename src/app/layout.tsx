@@ -1,3 +1,5 @@
+import 'styles/base.css';
+
 import Script from 'next/script';
 
 import 'antd/dist/antd.css';

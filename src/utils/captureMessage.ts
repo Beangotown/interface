@@ -52,6 +52,8 @@ const getErrorText = <T, R>(type: SentryMessageType, params: IParams<T, R>) => {
 };
 
 export const captureMessage = <T, R>({ type, params, level }: ICaptureMessageProps<T, R>) => {
+  const env = process.env.NEXT_PUBLIC_APP_ENV;
+  if (env?.includes('development')) return;
   const errorText = getErrorText(type, params);
   console.error('captureMessage query:', JSON.stringify(params.query));
   console.error('captureMessage description:', JSON.stringify(params.description));

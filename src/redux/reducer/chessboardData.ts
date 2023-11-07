@@ -9,10 +9,14 @@ const initialState: {
   resetStart: boolean;
   curChessboardNode?: CheckerboardNode;
   chessboardTotalStep: number;
+  checkerboardCounts: number;
+  startPosition: [number, number];
 } = {
   chessboardData: undefined,
   resetStart: true,
   chessboardTotalStep: 0,
+  checkerboardCounts: 18,
+  startPosition: [5, 4],
 };
 
 // Actual Slice
@@ -32,6 +36,12 @@ export const chessboardDataSlice = createSlice({
     setChessboardTotalStep(state, action) {
       state.chessboardTotalStep = action.payload;
     },
+    setCheckerboardCounts(state, action) {
+      state.checkerboardCounts = action.payload;
+    },
+    setStartPosition(state, action) {
+      state.startPosition = action.payload;
+    },
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
@@ -45,14 +55,21 @@ export const chessboardDataSlice = createSlice({
   },
 });
 
-export const { setChessboardData, setChessboardResetStart, setCurChessboardNode, setChessboardTotalStep } =
-  chessboardDataSlice.actions;
+export const {
+  setChessboardData,
+  setChessboardResetStart,
+  setCurChessboardNode,
+  setChessboardTotalStep,
+  setCheckerboardCounts,
+  setStartPosition,
+} = chessboardDataSlice.actions;
 export const getChessboardData = (state: AppState) => state.chessboardData.chessboardData?.data;
 export const getImageResources = (state: AppState) => state.chessboardData.chessboardData?.imageResources;
 export const getBtnImageResources = (state: AppState) => state.chessboardData.chessboardData?.btnImageResources;
-export const getCheckerboardCounts = (state: AppState) => state.chessboardData.chessboardData?.checkerboardCounts || 18;
+export const getCheckerboardCounts = (state: AppState) => state.chessboardData.checkerboardCounts;
 export const getCurChessboardNode = (state: AppState) => state.chessboardData.curChessboardNode;
 export const getResetStart = (state: AppState) => state.chessboardData.resetStart;
 export const getChessboardTotalStep = (state: AppState) => state.chessboardData.chessboardTotalStep;
+export const getChessboardStartPosition = (state: AppState) => state.chessboardData.startPosition;
 
 export default chessboardDataSlice.reducer;
