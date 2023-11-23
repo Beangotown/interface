@@ -2,9 +2,9 @@ const rewritesConfig = require('./rewrites/index');
 module.exports = {
   reactStrictMode: true,
   // output: 'export',
-  async rewrites() {
-    return rewritesConfig;
-  },
+  // async rewrites() {
+  //   return rewritesConfig;
+  // },
   images: {
     // loader: 'akamai',
     // path: '',
