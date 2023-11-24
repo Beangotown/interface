@@ -1,0 +1,30 @@
+[
+  {
+    "source": "/",
+    "destination": "$local_endpoint"
+  },
+  {
+    "source": "/cms/",
+    "destination": "$cms_endpoint"
+  },
+  {
+    "source": "/api",
+    "destination": "$api_endpoint"
+  },
+  {
+    "source": "/portkey/",
+    "destination": "$portkey_api_endpoint"
+  },
+  {
+    "source": "/connect",
+    "destination": "$portkey_api_endpoint"
+  },
+  {
+    "source": "/AElfIndexer_DApp/PortKeyIndexerCASchema",
+    "destination": "$portkey_dapp_endpoint/AElfIndexer_DApp/PortKeyIndexerCASchema"
+  },
+  {
+    "source": "/AElfIndexer_BeangoTown/BeangoTownIndexerPluginSchema",
+    "destination": "$beangotown_dapp_endpoint/AElfIndexer_BeangoTown/BeangoTownIndexerPluginSchema"
+  }
+]
