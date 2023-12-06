@@ -176,6 +176,12 @@ export interface IBeanPassClaimReq {
   caAddress: string;
 }
 
+export interface IErrorResponse {
+  code: string;
+  data: null;
+  message: string;
+}
+
 export interface IGameSetting {
   dailyMaxPlayCount: number;
   dailyPlayCountResetHours: number;

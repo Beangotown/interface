@@ -27,7 +27,7 @@ import { IContractError, WalletType } from 'types';
 import ShowNFTModal from 'components/CommonModal/ShowNFTModal';
 import CountDownModal from 'components/CommonModal/CountDownModal';
 import { dispatch, store } from 'redux/store';
-import { formatErrorMsg } from 'utils/formattError';
+import { TargetErrorType, formatErrorMsg } from 'utils/formattError';
 import { sleep } from 'utils/common';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
 import { getTxResultRetry } from 'utils/getTxResult';
@@ -236,8 +236,7 @@ export default function Game() {
   const go = async () => {
     if (goStatus !== Status.NONE) {
       if (!hasNft) {
-        setBeanPassModalType(GetBeanPassStatus.Need);
-        setBeanPassModalVisible(true);
+        onNftClick();
         return;
       }
       if (hasNft && playableCount === 0) {
@@ -303,7 +302,8 @@ export default function Game() {
 
   const checkBeanPassStatus = useCallback(async () => {
     if (address) {
-      const res = await getBeanPassModalType({ address, doubleClaimCallback });
+      showMessage.loading(TargetErrorType.Error7);
+      const res = await getBeanPassModalType({ address, doubleClaimCallback, reTryCounts: 4 });
       if (res) {
         setBeanPassModalType(res);
         setBeanPassModalVisible(true);
