@@ -38,7 +38,7 @@ class Request {
           return res;
         }
 
-        if (code !== '20000') {
+        if (code[0] !== '2') {
           captureMessage({
             type: SentryMessageType.HTTP,
             params: {
@@ -55,6 +55,8 @@ class Request {
             return data;
           case '20001':
             return {};
+          case '20002':
+            return res;
           case '50000':
             showMessage.error(errorMessage);
             return null;
