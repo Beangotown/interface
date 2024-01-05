@@ -18,8 +18,8 @@
   "dependencies": {
     "@headlessui/react": "^1.7.16",
     "@portkey/contracts": "^1.5.1",
-    "@portkey/did-ui-react": "1.5.1",
     "@portkey/detect-provider": "1.1.0-alpha.5",
+    "@portkey/did-ui-react": "1.5.4-alpha.2",
     "@portkey/onboarding": "^1.4.3",
     "@portkey/provider-types": "1.1.0-alpha.5",
     "@portkey/types": "^1.5.1",
