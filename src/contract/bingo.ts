@@ -23,7 +23,7 @@ export enum ContractMethodType {
 
 const bingoContract = async <T, R>(methodName: string, params: T, type: ContractMethodType) => {
   const contract = contractRequest.get();
-  const contractAddress = configInfo.configInfo!.bingoContractAddress;
+  const contractAddress = configInfo.configInfo!.beanGoTownContractAddress;
   const method = type === ContractMethodType.SEND ? 'callSendMethod' : 'callViewMethod';
   try {
     const res = await contract[method]({

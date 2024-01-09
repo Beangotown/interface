@@ -278,7 +278,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       chainId: curChain,
       rpcUrl: configInfo.configInfo?.rpcUrl,
       discoverRpcUrl: configInfo.configInfo?.discoverRpcUrl,
-      contractAddress: configInfo!.configInfo!.bingoContractAddress,
+      contractAddress: configInfo!.configInfo!.beanGoTownContractAddress,
     };
     contract.setWallet(walletInfo, walletType);
     contract.setConfig(config);
