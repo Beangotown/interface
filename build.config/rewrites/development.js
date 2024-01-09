@@ -6,7 +6,6 @@ module.exports = [
   {
     source: '/portkey/:path*',
     destination: 'http://192.168.66.203:5001/:path*',
-    // destination: 'https://localtest-applesign2.portkey.finance/:path*',
   },
   {
     source: '/api/:path*',

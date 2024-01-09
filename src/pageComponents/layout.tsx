@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import Header from 'components/Header';
 import { Layout as AntdLayout } from 'antd';
 
-import 'utils/firebase';
+// import 'utils/firebase';
 
 import dynamic from 'next/dynamic';
 

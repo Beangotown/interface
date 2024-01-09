@@ -198,10 +198,10 @@ export interface IConfigItems {
   graphqlServer: string;
   portkeyServer: string;
   explorerBaseUrl: string;
-  bingoGraphqlServer: string;
+  beanGoTownGraphqlServer: string;
   portKeyExtensionUrl: string;
   portkeyServiceUrl: string;
-  bingoContractAddress: string;
+  beanGoTownContractAddress: string;
   leaderboardWeekAward: IReward[];
   leaderboardSeasonAward: IReward[];
   gameRules: string[];

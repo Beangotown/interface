@@ -379,8 +379,8 @@ export default function Login() {
   };
 
   const initializeProto = async () => {
-    if (configInfo?.rpcUrl && configInfo?.bingoContractAddress) {
-      const protoBuf = await getProto(configInfo.bingoContractAddress, configInfo.rpcUrl);
+    if (configInfo?.rpcUrl && configInfo?.beanGoTownContractAddress) {
+      const protoBuf = await getProto(configInfo.beanGoTownContractAddress, configInfo.rpcUrl);
       const proto = Proto.getInstance();
       proto.setProto(protoBuf);
     }
@@ -388,7 +388,7 @@ export default function Login() {
 
   useEffect(() => {
     initializeProto();
-  }, [configInfo?.rpcUrl, configInfo?.bingoContractAddress]);
+  }, [configInfo?.rpcUrl, configInfo?.beanGoTownContractAddress]);
 
   return (
     <div
