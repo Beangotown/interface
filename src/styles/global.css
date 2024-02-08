@@ -30,6 +30,15 @@ input[type='number'] {
   font-size: 16Px !important;
 }
 
+.portkey-ui-segmented-phone > .login-btn {
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.portkey-ui-web2design-switch-sign.portkey-ui-web2design-switch-sign-sign-up {
+  margin-top: 0 !important;
+}
+
 .portkey-ui-receive-content {
   max-width: 100%;
 }

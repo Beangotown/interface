@@ -27,7 +27,15 @@ import { useRouter } from 'next/navigation';
 import { sleep } from 'utils/common';
 import useVerifier from 'hooks/useVarified';
 import { WalletType } from 'constants/index';
-import { PortkeyIcon, AppleIcon, QrCodeIcon, PhoneIcon, EmailIcon, GoogleIcon } from 'assets/images/index';
+import {
+  PortkeyIcon,
+  AppleIcon,
+  QrCodeIcon,
+  PhoneIcon,
+  EmailIcon,
+  GoogleIcon,
+  TelegramIcon,
+} from 'assets/images/index';
 import { CloseIcon } from 'assets/images/index';
 import useWebLogin from 'hooks/useWebLogin';
 import { KEY_NAME } from 'constants/platform';
@@ -45,9 +53,10 @@ const components = {
   portkey: PortkeyIcon,
   qrcode: QrCodeIcon,
   google: GoogleIcon,
+  telegram: TelegramIcon,
 };
 
-type IconType = 'apple' | 'google' | 'portkey' | 'email' | 'phone' | 'qrcode';
+type IconType = 'apple' | 'google' | 'portkey' | 'email' | 'phone' | 'qrcode' | 'telegram';
 
 interface IAuthenticationInfo {
   googleAccessToken?: string;
@@ -69,13 +78,6 @@ export default function Login() {
   >({});
 
   const handleSocialStep1Success = async (value: IGuardianIdentifierInfo) => {
-    const authInfo: IAuthenticationInfo = {};
-    if (value.accountType === SocialLoginType.GOOGLE) {
-      authInfo.googleAccessToken = value.authenticationInfo?.googleAccessToken;
-    } else if (value.accountType === SocialLoginType.APPLE) {
-      authInfo.appleIdToken = value.authenticationInfo?.appleIdToken;
-    }
-
     setDrawerVisible(false);
     setModalVisible(false);
     if (!value.isLoginGuardian) {
@@ -88,7 +90,7 @@ export default function Login() {
             isLoginGuardian: value.isLoginGuardian,
             identifier: value.identifier,
             accountType: value.accountType,
-            authenticationInfo: authInfo,
+            authenticationInfo: value.authenticationInfo,
           },
         },
       });
@@ -107,7 +109,7 @@ export default function Login() {
     onError: undefined,
   });
 
-  const { handlePortKey, handleFinish, handleApple, handleGoogle, loginEagerly } = useWebLogin({
+  const { handlePortKey, handleFinish, handleApple, handleGoogle, handleTeleGram, loginEagerly } = useWebLogin({
     signHandle,
   });
 
@@ -197,23 +199,27 @@ export default function Login() {
     const allMethods = [
       { name: 'Login with Portkey', onclick: handlePortKey, iconName: 'portkey' },
       {
+        name: 'Login with Telegram',
+        onclick: handleTeleGram,
+        yellowColor: true,
+        iconName: 'telegram',
+      },
+      {
         name: 'Login with Google',
         onclick: handleGoogle,
-        yellowColor: !inModel ? true : undefined,
         iconName: 'google',
       },
       { name: 'Login with Apple', onclick: handleApple, yellowColor: !inModel ? true : undefined, iconName: 'apple' },
       { name: 'Login with Email', onclick: handleEmail, iconName: 'email' },
-      { name: 'Login with Phone', onclick: handlePhone, iconName: 'phone' },
       { name: 'Login with QR code', onclick: handleQrcode, iconName: 'qrcode' },
     ];
-    let filterMethods = [];
+    let filterMethods = allMethods;
     if (isInApp) {
       filterMethods = [allMethods[0]];
-    } else if (isInIOS) {
-      filterMethods = inModel ? [allMethods[1], ...allMethods.slice(3, 6)] : [allMethods[0], allMethods[2]];
     } else {
-      filterMethods = inModel ? [allMethods[2], ...allMethods.slice(3, 6)] : [allMethods[0], allMethods[1]];
+      filterMethods = inModel
+        ? [allMethods[2], ...allMethods.slice(3, allMethods.length)]
+        : [allMethods[0], allMethods[1]];
     }
     return filterMethods.map((item, index) => (
       <div key={index} onClick={item.onclick} className={item?.yellowColor ? styles.loginBtnYellow : styles.loginBtn}>
@@ -247,51 +253,54 @@ export default function Login() {
     return <Con className={inModel ? styles.loginBtnBlueIcon : styles.loginBtnIcon} />;
   };
 
-  const unlock = useCallback(async () => {
-    let wallet;
-    try {
-      wallet = await did.load(passwordValue, KEY_NAME);
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-
-    if (!wallet.didWallet.accountInfo.loginAccount) {
-      setIsErrorTipShow(true);
-      return;
-    }
-
-    const caInfo = wallet.didWallet.caInfo[configInfo!.curChain];
-    const originChainId = localStorage.getItem(PORTKEY_LOGIN_CHAIN_ID_KEY);
-    if (!originChainId) return;
-    let caHash = caInfo?.caHash;
-
-    if (!caInfo) {
+  const unlock = useCallback(
+    async (v: string) => {
+      let wallet;
       try {
-        caHash = wallet.didWallet.caInfo[originChainId].caHash;
-        const caAddress = wallet.didWallet.caInfo[originChainId].caAddress;
-        setIsUnlockShow(false);
-        handleFinish(WalletType.portkey, {
-          caInfo: { caHash, caAddress },
-          walletInfo: wallet.didWallet.managementAccount,
-          pin: passwordValue,
-          chainId: originChainId as ChainId,
-        });
+        wallet = await did.load(v, KEY_NAME);
       } catch (err) {
-        showMessage.error();
+        console.log(err);
         return;
       }
-    } else {
-      setIsUnlockShow(false);
-      const walletInfo = {
-        caInfo,
-        pin: passwordValue,
-        chainId: configInfo!.curChain,
-        walletInfo: wallet.didWallet.managementAccount,
-      };
-      handleFinish(WalletType.portkey, walletInfo);
-    }
-  }, [configInfo, handleFinish, passwordValue]);
+      if (!wallet.didWallet.accountInfo.loginAccount) {
+        setIsErrorTipShow(true);
+        setPasswordValue('');
+        return;
+      }
+
+      const caInfo = wallet.didWallet.caInfo[configInfo!.curChain];
+      const originChainId = localStorage.getItem(PORTKEY_LOGIN_CHAIN_ID_KEY);
+      if (!originChainId) return;
+      let caHash = caInfo?.caHash;
+
+      if (!caInfo) {
+        try {
+          caHash = wallet.didWallet.caInfo[originChainId].caHash;
+          const caAddress = wallet.didWallet.caInfo[originChainId].caAddress;
+          setIsUnlockShow(false);
+          handleFinish(WalletType.portkey, {
+            caInfo: { caHash, caAddress },
+            walletInfo: wallet.didWallet.managementAccount,
+            pin: v,
+            chainId: originChainId as ChainId,
+          });
+        } catch (err) {
+          showMessage.error();
+          return;
+        }
+      } else {
+        setIsUnlockShow(false);
+        const walletInfo = {
+          caInfo,
+          pin: v,
+          chainId: configInfo!.curChain,
+          walletInfo: wallet.didWallet.managementAccount,
+        };
+        handleFinish(WalletType.portkey, walletInfo);
+      }
+    },
+    [configInfo, handleFinish],
+  );
 
   const { getRecommendationVerifier, verifySocialToken } = useVerifier();
 
@@ -326,12 +335,16 @@ export default function Login() {
         const verifier = await getRecommendationVerifier(curChain);
         setLoading(false);
         const { accountType, authenticationInfo, identifier } = value;
-        if (accountType === SocialLoginType.APPLE || accountType === SocialLoginType.GOOGLE) {
+        if (
+          accountType === SocialLoginType.APPLE ||
+          accountType === SocialLoginType.GOOGLE ||
+          accountType === SocialLoginType.TELEGRAM
+        ) {
           setLoading(true);
           console.log('authenticationInfo', authenticationInfo);
           const result = await verifySocialToken({
             accountType,
-            token: authenticationInfo?.appleIdToken || authenticationInfo?.googleAccessToken,
+            token: authenticationInfo?.authToken,
             guardianIdentifier: identifier,
             verifier,
             chainId: curChain,
@@ -368,6 +381,7 @@ export default function Login() {
 
   const handlePortKeyLoginFinish = useCallback(
     (wallet: DIDWalletInfo) => {
+      signInRef.current?.setOpen(false);
       localStorage.setItem(PORTKEY_LOGIN_CHAIN_ID_KEY, wallet.chainId);
       handleFinish(WalletType.portkey, wallet);
     },
@@ -444,6 +458,7 @@ export default function Login() {
       </Modal>
 
       <SignIn
+        keyboard
         ref={signInRef}
         design={design}
         defaultLifeCycle={currentLifeCircle}
@@ -454,6 +469,7 @@ export default function Login() {
       />
 
       <Unlock
+        keyboard
         onUnlock={unlock}
         open={isUnlockShow}
         onCancel={() => {
