@@ -220,6 +220,8 @@ export interface IConfigItems {
   isHalloween?: boolean;
   explorerBeanPassUrl: string;
   forestNftDetailUrl: string;
+  isShowRampBuy?: boolean;
+  isShowRampSell?: boolean;
 }
 
 export interface IChessboardData {

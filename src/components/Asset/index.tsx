@@ -10,6 +10,7 @@ import styles from './style.module.css';
 export default function MyAsset() {
   const router = useRouter();
   const { walletInfo, walletType, isLogin, configInfo } = useGetState();
+  const { isShowRampBuy, isShowRampSell } = configInfo!;
   useEffect(() => {
     if (!isLogin) {
       router.push('/login');
@@ -27,6 +28,9 @@ export default function MyAsset() {
         caHash={walletInfo?.portkeyInfo?.caInfo?.caHash}
         didStorageKeyName={KEY_NAME}>
         <Asset
+          isShowRamp={isShowRampBuy || isShowRampSell}
+          isShowRampBuy={isShowRampBuy}
+          isShowRampSell={isShowRampSell}
           faucet={{
             faucetContractAddress: configInfo?.faucetContractAddress,
           }}
