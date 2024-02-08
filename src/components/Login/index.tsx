@@ -380,8 +380,11 @@ export default function Login() {
   );
 
   const handlePortKeyLoginFinish = useCallback(
-    (wallet: DIDWalletInfo) => {
+    async (wallet: DIDWalletInfo) => {
       signInRef.current?.setOpen(false);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
       localStorage.setItem(PORTKEY_LOGIN_CHAIN_ID_KEY, wallet.chainId);
       handleFinish(WalletType.portkey, wallet);
     },
