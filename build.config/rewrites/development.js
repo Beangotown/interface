@@ -1,15 +1,15 @@
 module.exports = [
   {
     source: '/connect/:path*',
-    destination: 'http://192.168.66.203:8001/connect/:path*',
+    destination: 'http://192.168.67.127:8080/connect/:path*',
   },
   {
     source: '/portkey/:path*',
-    destination: 'http://192.168.66.203:5001/:path*',
+    destination: 'http://192.168.67.127:5001/:path*',
   },
   {
     source: '/api/:path*',
-    destination: 'http://192.168.66.248:5008/api/:path*',
+    destination: 'http://192.168.66.248:3018/api/:path*',
   },
   {
     source: '/cms/:path*',

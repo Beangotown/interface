@@ -1,11 +1,11 @@
 module.exports = [
   {
     source: '/connect/:path*',
-    destination: 'https://auth-portkey-test.portkey.finance/connect/:path*',
+    destination: 'https://auth-aa-portkey-test.portkey.finance/connect/:path*',
   },
   {
     source: '/portkey/:path*',
-    destination: 'https://did-portkey-test.portkey.finance/:path*',
+    destination: 'https://aa-portkey-test.portkey.finance/:path*',
   },
   {
     source: '/api/:path*',
@@ -13,7 +13,7 @@ module.exports = [
   },
   {
     source: '/cms/:path*',
-    destination: 'https://test-cms.beangotown.com/:path*',
+    destination: 'https://testv2.beangotown.com/cms/:path*',
   },
   {
     source: '/AElfIndexer_DApp/PortKeyIndexerCASchema/:path*',

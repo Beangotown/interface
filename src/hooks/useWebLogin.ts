@@ -193,7 +193,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       openPageInDiscover();
       return;
     }
-    if (!window?.portkey && !isMobileDevices()) {
+    if (!window?.Portkey && !isMobileDevices()) {
       window?.open(portKeyExtensionUrl, '_blank')?.focus();
       return;
     }
@@ -204,6 +204,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       return;
     }
     const network = await provider?.request({ method: 'network' });
+    console.log(network);
     if (network !== Network) {
       console.log(configInfo);
       if (Network === NetworkType.MAIN) {
@@ -227,24 +228,26 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     }
   }, []);
 
-  const handleGoogle = async () => {
+  const handleThirdPart = async (type: SocialLoginType) => {
     discoverUtils.removeDiscoverStorageSign();
     setLoading(true);
-    const res = await getSocialToken({ type: SocialLoginType.GOOGLE });
+    const res = await getSocialToken({ type });
     await signHandle.onSocialFinish({
       type: res.provider,
       data: { accessToken: res.token },
     });
   };
 
-  const handleApple = async () => {
-    discoverUtils.removeDiscoverStorageSign();
-    setLoading(true);
-    const res = await getSocialToken({ type: SocialLoginType.APPLE });
-    await signHandle.onSocialFinish({
-      type: res.provider,
-      data: { accessToken: res.token },
-    });
+  const handleGoogle = async () => {
+    handleThirdPart(SocialLoginType.GOOGLE);
+  };
+
+  const handleTeleGram = () => {
+    handleThirdPart(SocialLoginType.TELEGRAM);
+  };
+
+  const handleApple = () => {
+    handleThirdPart(SocialLoginType.APPLE);
   };
 
   const getSocialToken = async ({ type }: { type: SocialLoginType; clientId?: string; redirectURI?: string }) => {
@@ -467,6 +470,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     loginEagerly,
     handlePortKey,
     handleGoogle,
+    handleTeleGram,
     handleApple,
     handleFinish,
     initializeContract,

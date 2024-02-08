@@ -10,7 +10,7 @@ interface Window {
   web3?: {};
   plus?: any;
   NightElf?: {};
-  portkey?: any;
+  Portkey?: any;
   open?: Function;
 }
 

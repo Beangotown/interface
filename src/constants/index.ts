@@ -5,6 +5,6 @@ export enum WalletType {
 }
 
 export enum NetworkType {
-  MAIN = 'MAIN',
+  MAIN = 'MAINNET',
   TESTNET = 'TESTNET',
 }

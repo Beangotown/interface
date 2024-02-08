@@ -2,7 +2,17 @@
   :global {
     .web2design-qrcode-icon,
     .divider-center.portkey-ant-divider-with-text,
-    .social-content-wrapper {
+    .social-icon-group-wrapper {
+      @apply hidden;
+    }
+
+    .web2design-qrcode-icon,
+    .divider-center.portkey-ant-divider-with-text,
+    .login-primary-btn {
+      @apply mb-[24px];
+    }
+
+    .backleft-icon {
       @apply hidden;
     }
   }
@@ -11,6 +21,10 @@
 .qrcodeBox {
   :global {
     .back-icon-wrapper {
+      @apply !hidden;
+    }
+
+    .backleft-icon {
       @apply !hidden;
     }
   }

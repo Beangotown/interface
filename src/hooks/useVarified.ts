@@ -55,6 +55,10 @@ const useVerifier = () => {
           clientId = socialLogin?.Google?.clientId;
           customLoginHandler = socialLogin?.Google?.customLoginHandler;
           break;
+        case 'Telegram':
+          accessToken = token;
+          customLoginHandler = socialLogin?.Telegram?.customLoginHandler;
+          break;
         default:
           throw 'accountType is not supported';
       }

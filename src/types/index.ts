@@ -32,6 +32,7 @@ export enum ContractMethodType {
 export enum SocialLoginType {
   APPLE = 'Apple',
   GOOGLE = 'Google',
+  TELEGRAM = 'Telegram',
 }
 
 export interface IContractError extends Error {
