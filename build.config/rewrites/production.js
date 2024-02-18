@@ -1,11 +1,11 @@
 module.exports = [
   {
     source: '/connect/:path*',
-    destination: 'https://auth-portkey.portkey.finance/connect/:path*',
+    destination: 'https://auth-aa-portkey.portkey.finance/connect/:path*',
   },
   {
     source: '/portkey/:path*',
-    destination: 'https://did-portkey.portkey.finance/:path*',
+    destination: 'https://aa-portkey.portkey.finance/:path*',
   },
   {
     source: '/api/:path*',
