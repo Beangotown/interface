@@ -34,8 +34,7 @@ import { NetworkType } from 'constants/index';
 import { sleep } from 'utils/common';
 import { getSyncHolder, trackLoginInfo } from 'utils/trackAddressInfo';
 import discoverUtils from 'utils/discoverUtils';
-
-const KEY_NAME = 'BEANGOTOWN';
+import { KEY_NAME } from 'constants/platform';
 
 export type DiscoverDetectState = 'unknown' | 'detected' | 'not-detected';
 
