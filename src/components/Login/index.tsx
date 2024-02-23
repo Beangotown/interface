@@ -199,23 +199,27 @@ export default function Login() {
     const allMethods = [
       { name: 'Login with Portkey', onclick: handlePortKey, iconName: 'portkey' },
       {
-        name: 'Login with Telegram',
-        onclick: handleTeleGram,
-        yellowColor: true,
-        iconName: 'telegram',
-      },
-      {
         name: 'Login with Google',
         onclick: handleGoogle,
+        yellowColor: !inModel ? true : undefined,
         iconName: 'google',
       },
       { name: 'Login with Apple', onclick: handleApple, yellowColor: !inModel ? true : undefined, iconName: 'apple' },
       { name: 'Login with Email', onclick: handleEmail, iconName: 'email' },
+      {
+        name: 'Login with Telegram',
+        onclick: handleTeleGram,
+        iconName: 'telegram',
+      },
       { name: 'Login with QR code', onclick: handleQrcode, iconName: 'qrcode' },
     ];
     let filterMethods = allMethods;
     if (isInApp) {
       filterMethods = [allMethods[0]];
+    } else if (isInIOS) {
+      filterMethods = inModel
+        ? [allMethods[1], ...allMethods.slice(3, allMethods.length)]
+        : [allMethods[0], allMethods[2]];
     } else {
       filterMethods = inModel
         ? [allMethods[2], ...allMethods.slice(3, allMethods.length)]
