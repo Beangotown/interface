@@ -213,41 +213,75 @@ function GoButton({
             </div>
           </div>
         ) : (
-          <div
-            onMouseEnter={() => {
-              setPcBtnMouseOn(true);
-            }}
-            onMouseLeave={() => {
-              setPcBtnMouseOn(false);
-            }}
-            onMouseDown={() => {
-              setPcBtnPress(true);
-            }}
-            onMouseUp={() => {
-              setPcBtnPress(false);
-              go && go();
-            }}
-            style={{
-              backgroundImage: `url(${
-                btnImageResources?.pc[
-                  pcBtnMouseOn && status === Status.NONE
-                    ? 'bg-go-hover-pc'
-                    : pcBtnPress && status === Status.NONE
-                    ? 'bg-go-press-pc'
-                    : status === Status.DISABLED
-                    ? 'bg-go-disabled-pc'
-                    : 'bg-go-default-pc'
-                ]
-              })`,
-            }}
-            className={`${styles['btn-pc']} ${styles['button__icon']} cursor-custom relative flex items-center justify-center z-[11]  `}>
-            {pcBtnPress && status === Status.NONE && <div className={styles['btn-pc-mask']}></div>}
+          <div className="flex items-center">
             <div
-              className={`${
-                pcBtnPress ? 'mt-[5px]' : ''
-              } absolute top-[10px] flex ml-[12px] flex-col items-center justify-center`}>
-              {statusCom[status]}
+              onMouseEnter={() => {
+                setPcBtnMouseOn(true);
+              }}
+              onMouseLeave={() => {
+                setPcBtnMouseOn(false);
+              }}
+              onMouseDown={() => {
+                setPcBtnPress(true);
+              }}
+              onMouseUp={() => {
+                setPcBtnPress(false);
+                go && go();
+              }}
+              style={{
+                backgroundImage: `url(${
+                  btnImageResources?.pc[
+                    pcBtnMouseOn && status === Status.NONE
+                      ? 'bg-go-hover-pc'
+                      : pcBtnPress && status === Status.NONE
+                      ? 'bg-go-press-pc'
+                      : status === Status.DISABLED
+                      ? 'bg-go-disabled-pc'
+                      : 'bg-go-default-pc'
+                  ]
+                })`,
+              }}
+              className={`${styles['btn-pc']} ${styles['button__icon']} cursor-custom relative flex items-center justify-center z-[11]  `}>
+              {pcBtnPress && status === Status.NONE && <div className={styles['btn-pc-mask']}></div>}
+              <div
+                className={`${
+                  pcBtnPress ? 'mt-[5px]' : ''
+                } absolute top-[10px] flex ml-[12px] flex-col items-center justify-center`}>
+                {statusCom[status]}
+              </div>
             </div>
+            {/* <div
+              onMouseEnter={() => {
+                setPcBtnMouseOn(true);
+              }}
+              onMouseLeave={() => {
+                setPcBtnMouseOn(false);
+              }}
+              onMouseDown={() => {
+                setPcBtnPress(true);
+              }}
+              onMouseUp={() => {
+                setPcBtnPress(false);
+                // go && go();
+              }}
+              style={{
+                backgroundImage: `url(${
+                  btnImageResources?.pc[
+                    pcBtnMouseOn && status === Status.NONE
+                      ? 'bg-go-hover-pc'
+                      : pcBtnPress && status === Status.NONE
+                      ? 'bg-go-press-pc'
+                      : status === Status.DISABLED
+                      ? 'bg-go-disabled-pc'
+                      : 'bg-go-default-pc'
+                  ]
+                })`,
+              }}
+              className={`${styles['dice-number']}`}>
+              {pcBtnPress && status === Status.NONE && <div className={styles['dice-content-mask']}></div>}
+
+              <img src={diceImages[1]} alt="" className={`${styles['dice-content']} ${styles['dice-content-press']}`} />
+            </div> */}
           </div>
         )}
       </div>

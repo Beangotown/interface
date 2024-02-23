@@ -61,7 +61,10 @@
 }
 
 .btn-pc {
-  @apply bg-[100%_100%] bg-no-repeat bg-cover w-[446px]  h-[170px] ml-[-30px];
+  /* @apply bg-[100%_100%] bg-no-repeat bg-cover/contain w-[446px]  h-[170px] ml-[-30px]; */
+  @apply bg-[100%_100%] bg-no-repeat w-[284px] h-[158px] ml-[-30px];
+
+  background-size: 100% 100%;
 
   .btn-pc-mask {
     @apply absolute w-[400px] h-[142px] top-[0px] left-[34px] rounded-[48px] z-[10];

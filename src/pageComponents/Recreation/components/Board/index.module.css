@@ -1,10 +1,10 @@
 .board__bean {
-  @apply mb-[44px] h-[72px] w-[394px] rounded-full border border-solid border-[#FFFFFF] pl-[16px] bg-[#305CD9] flex items-center;
+  @apply relative mb-[16px] h-[72px] w-[394px] rounded-full border border-solid border-[#FFFFFF] pl-[16px] flex items-center;
   svg > g {
     @apply h-[64px] w-[64px];
   }
 
   .board__bean__number {
-    @apply pl-[58px] flex flex-1 text-[#fff] text-[40px] leading-[48px] font-fonarto;
+    @apply pl-[74px] pr-[10px]  w-[394px] flex items-center justify-center text-[#fff] font-fonarto break-all;
   }
 }

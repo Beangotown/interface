@@ -5,14 +5,17 @@ import Nft from 'assets/images/recreation/nft.svg';
 import GoButton, { IGoButton, Status } from '../GoButton';
 import useGetState from 'redux/state/useGetState';
 import beanImage from 'assets/images/recreation/bean.png';
+import addBeanImage from 'assets/images/recreation/addBean.png';
+import weeklyBeanImage from 'assets/images/recreation/weeklyBean.png';
 
 import styles from './index.module.css';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import { dispatch } from 'redux/store';
 import { toggleShowLeaderboard } from 'redux/reducer/info';
 import useInitLeaderBoard from 'components/Leaderboard/hooks/useInitLeaderBoard';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import { SentryMessageType, captureMessage } from 'utils/captureMessage';
+import { formatTokenPrice } from 'utils/format';
 
 interface IBoard extends IGoButton {
   onNftClick?: () => void;
@@ -51,6 +54,28 @@ function Board({
     }
   };
 
+  const renderBoardBean = ({
+    sumScore,
+    icon,
+    onClick,
+  }: {
+    sumScore?: string;
+    icon: StaticImageData;
+    onClick?: () => void;
+  }) => {
+    return (
+      <div className={`${styles['board__bean']} bg-[#305CD9]`} onClick={onClick}>
+        <Image src={icon} alt="bean" className="h-[64px] w-[64px] absolute" />
+        <span
+          className={`${styles['board__bean__number']} ${
+            sumScore && sumScore.toString().length > 10 ? 'text-[32px] leading-[32px]' : 'text-[40px] leading-[48px]'
+          }`}>
+          {sumScore || 0}
+        </span>
+      </div>
+    );
+  };
+
   if (isMobile) {
     return (
       <div className="absolute right-0 top-[15px] z-[40]">
@@ -71,13 +96,20 @@ function Board({
     return (
       <div className="flex h-full w-full flex-col px-[47px] pt-[56px]">
         <div className="relative z-40 flex-1">
-          <div className={styles['board__bean']}>
-            <Image src={beanImage} alt="bean" className="h-[64px] w-[64px]" />
-            <span className={styles['board__bean__number']}>{playerInfo?.sumScore || 0}</span>
-          </div>
+          {renderBoardBean({
+            icon: addBeanImage,
+            sumScore: formatTokenPrice(playerInfo?.sumScore || 0),
+            onClick: () => {
+              console.log('open modal awaken');
+            },
+          })}
+          {renderBoardBean({
+            icon: weeklyBeanImage,
+            sumScore: formatTokenPrice(playerInfo?.sumScore || 0),
+          })}
           <Menu
             icon={<Ranking className="h-[auto] w-[76px]" />}
-            className="mb-[24px]"
+            className="mb-[24px] mt-[40px]"
             title="Leader Board"
             onClick={handleShowLeaderboard}
           />
