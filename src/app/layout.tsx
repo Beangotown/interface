@@ -8,6 +8,7 @@ import Provider from 'provider';
 import 'styles/global.css';
 import 'styles/theme.css';
 import LayoutProvider from './LayoutProvider';
+import OpenScreenLoading from 'components/OpenScreenLoading/OpenScreenLoading';
 
 export const metadata = {
   title: 'BeanGoTown',
@@ -31,6 +32,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <body>
         <Provider>
           <LayoutProvider>{children}</LayoutProvider>
+          <OpenScreenLoading />
         </Provider>
       </body>
     </html>

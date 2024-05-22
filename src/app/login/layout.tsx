@@ -7,12 +7,13 @@ import dynamic from 'next/dynamic';
 
 import { store } from 'redux/store';
 import { setLoginStatus } from 'redux/reducer/info';
-import { did } from '@portkey/did-ui-react';
+import { did, eventBus } from '@portkey/did-ui-react';
 
 import { useRouter } from 'next/navigation';
 import useGetState from 'redux/state/useGetState';
 import { KEY_NAME } from 'constants/platform';
 import { LoginStatus } from 'redux/types/reducerTypes';
+import { OPEN_SCREEN_LOADING_EVENT_NAME } from 'constants/animation';
 
 const MAX_SINGLE_REQUEST_TIME = 3 * 1000;
 const MAX_SHEDULE_TIME = 30 * 1000;
@@ -150,7 +151,14 @@ const Layout = dynamic(
       );
     };
   },
-  { ssr: false },
+  {
+    ssr: false,
+    loading: (loadingProps) => {
+      console.log(loadingProps.isLoading, 'loadingProps');
+      eventBus.emit(OPEN_SCREEN_LOADING_EVENT_NAME, loadingProps.isLoading);
+      return null;
+    },
+  },
 );
 
 export default Layout;
