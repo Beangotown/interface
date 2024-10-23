@@ -93,7 +93,7 @@ export default function Login() {
     } else {
       const signResult = await onSignInHandler(value);
       if (!signResult) return;
-      if (signResult.nextStep === 'SetPinAndAddManager') {
+      if (signResult.nextStep === 'SetPinAndAddManager' && TelegramPlatform.isTelegramPlatform()) {
         const guardianIdentifierInfo = signResult.value.guardianIdentifierInfo;
         const approvedList = signResult.value.approvedList;
         if (!approvedList) return;
