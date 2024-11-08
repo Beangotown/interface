@@ -5,10 +5,5 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "tailwindCSS.emmetCompletions": true,
   "emmet.triggerExpansionOnTab": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.stylelint": true
-  },
-  "cSpell.words": [
-    "simsun"
-  ]
+  "cSpell.words": ["simsun"]
 }

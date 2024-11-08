@@ -7,15 +7,7 @@ import { getAnalytics, logEvent, Analytics } from 'firebase/analytics';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyDRSLx_4mw1dS6i1FeIZEvPxVmUKTftn5A',
-  authDomain: 'bean-go-town.firebaseapp.com',
-  projectId: 'bean-go-town',
-  storageBucket: 'bean-go-town.appspot.com',
-  messagingSenderId: '296185596722',
-  appId: '1:296185596722:web:dd9fa3892d97e0ff6aa52b',
-  measurementId: 'G-KMCSM7Q42G',
-};
+const firebaseConfig = {};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

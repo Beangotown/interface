@@ -1,6 +1,4 @@
-import React, { ReactElement, useState } from 'react';
-
-import Image from 'next/image';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './index.module.css';
 import useGetState from 'redux/state/useGetState';
@@ -54,6 +52,19 @@ function GoButton({
   const [pcBtnPress, setPcBtnPress] = useState(false);
   const [mBtnPress, setMBtnPress] = useState(false);
 
+  const mobileDiceButtonRef = useRef<HTMLDivElement | null>(null);
+  const mobileGoButtonRef = useRef<HTMLDivElement | null>(null);
+  const goFn = useRef(go);
+  const changeCurDiceCountFn = useRef(changeCurDiceCount);
+
+  useEffect(() => {
+    goFn.current = go;
+  }, [go]);
+
+  useEffect(() => {
+    changeCurDiceCountFn.current = changeCurDiceCount;
+  }, [changeCurDiceCount]);
+
   const statusCom: Record<Status, ReactElement> = {
     [Status.NONE]: (
       <>
@@ -99,15 +110,67 @@ function GoButton({
     changeCurDiceCount && changeCurDiceCount(number);
   };
 
-  const changeDiceCount = (event: React.TouchEvent<HTMLDivElement>) => {
-    event.preventDefault();
+  const changeDiceCount: EventListener = useCallback(
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      const number = ((curDiceCount || 1) % diceCount.length) + 1;
+      setCurPress(number);
+      setCurPressM(number);
+      changeCurDiceCountFn.current?.(number);
+    },
+    [curDiceCount, diceCount.length],
+  );
+
+  const handleReleaseDice: EventListener = useCallback((event) => {
     event.stopPropagation();
-    event.nativeEvent.stopImmediatePropagation();
-    const number = ((curDiceCount || 1) % diceCount.length) + 1;
-    setCurPress(number);
-    setCurPressM(number);
-    changeCurDiceCount && changeCurDiceCount(number);
-  };
+    event.stopImmediatePropagation();
+    setCurPress(null);
+    setCurPressM(null);
+  }, []);
+
+  const handlePressGoButton: EventListener = useCallback((event) => {
+    event.preventDefault();
+    setMBtnPress(true);
+  }, []);
+
+  const handleReleaseGoButton: EventListener = useCallback((event) => {
+    setMBtnPress(false);
+    goFn.current?.();
+  }, []);
+
+  // Handle both touch and mouse events to support interaction in Telegram WebApp on PC
+  useEffect(() => {
+    const mobileGoButton = mobileGoButtonRef.current;
+    if (!mobileGoButton) return;
+    mobileGoButton.addEventListener('touchstart', handlePressGoButton, { passive: false });
+    mobileGoButton.addEventListener('mousedown', handlePressGoButton);
+    mobileGoButton.addEventListener('touchend', handleReleaseGoButton);
+    mobileGoButton.addEventListener('mouseup', handleReleaseGoButton);
+    return () => {
+      mobileGoButton.removeEventListener('touchstart', handlePressGoButton);
+      mobileGoButton.removeEventListener('mousedown', handlePressGoButton);
+      mobileGoButton.removeEventListener('touchend', handleReleaseGoButton);
+      mobileGoButton.removeEventListener('mouseup', handleReleaseGoButton);
+    };
+  }, [handlePressGoButton, handleReleaseGoButton]);
+
+  // Handle both touch and mouse events to support interaction in Telegram WebApp on PC
+  useEffect(() => {
+    const mobileDiceButton = mobileDiceButtonRef.current;
+    if (!mobileDiceButton) return;
+    mobileDiceButton.addEventListener('touchstart', changeDiceCount, { passive: false });
+    mobileDiceButton.addEventListener('mousedown', changeDiceCount);
+    mobileDiceButton.addEventListener('touchend', handleReleaseDice);
+    mobileDiceButton.addEventListener('mouseup', handleReleaseDice);
+    return () => {
+      mobileDiceButton.removeEventListener('touchstart', changeDiceCount);
+      mobileDiceButton.removeEventListener('mousedown', changeDiceCount);
+      mobileDiceButton.removeEventListener('touchend', handleReleaseDice);
+      mobileDiceButton.removeEventListener('mouseup', handleReleaseDice);
+    };
+  }, [changeDiceCount, handleReleaseDice]);
 
   return (
     <div className={`${styles['button-mobile']} ${!isMobile && styles.button} relative w-full items-center pb-[9px]`}>
@@ -162,14 +225,7 @@ function GoButton({
         {isMobile ? (
           <div className={styles['button__border']}>
             <div
-              onTouchStart={(event) => {
-                event.preventDefault();
-                setMBtnPress(true);
-              }}
-              onTouchEnd={() => {
-                setMBtnPress(false);
-                go && go();
-              }}
+              ref={mobileGoButtonRef}
               style={{
                 backgroundImage: `url(${
                   btnImageResources?.mobile[
@@ -193,13 +249,7 @@ function GoButton({
                   })`,
                 }}
                 className={`relative ${styles['dice-number-mobile']}`}
-                onTouchStart={changeDiceCount}
-                onTouchEnd={(event) => {
-                  event.stopPropagation();
-                  event.nativeEvent.stopImmediatePropagation();
-                  setCurPress(null);
-                  setCurPressM(null);
-                }}>
+                ref={mobileDiceButtonRef}>
                 {curPressM && <div className={styles['dice-content-mobile-mask']}></div>}
 
                 <img

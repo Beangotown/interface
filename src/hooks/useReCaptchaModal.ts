@@ -4,7 +4,7 @@ import { handleErrorMessage } from '@portkey/did-ui-react';
 import { setReCaptchaModal } from 'utils/setReCaptchaModal';
 import useReCaptcha from './useReCaptcha';
 import { ReCaptchaResponseType } from '@portkey/did-ui-react';
-import { OperationTypeEnum } from 'types/index';
+import { OperationTypeEnum } from '@portkey/services';
 
 export default function useReCaptchaModal() {
   const reCaptchaInfo = useReCaptcha();

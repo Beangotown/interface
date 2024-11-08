@@ -6,7 +6,7 @@ import { did } from '@portkey/did-ui-react';
 
 import { CallContractParams, IDiscoverInfo, PortkeyInfoType, WalletInfoType } from 'types';
 import { getAElfInstance, getViewWallet } from 'utils/contractInstance';
-import { aelf, sleep } from '@portkey/utils';
+import { aelf } from '@portkey/utils';
 import { getTxResultRetry } from 'utils/getTxResult';
 import DetectProvider from 'utils/InstanceProvider';
 import { Manager } from '@portkey/services';

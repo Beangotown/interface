@@ -1,12 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { did, verification } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/types';
-import { AccountType } from '@portkey/services';
+import { AccountType, OperationTypeEnum } from '@portkey/services';
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { IVerifier } from '@portkey/did-ui-react';
 import { useVerifyToken } from '@portkey/did-ui-react';
 import { ISocialLoginConfig } from '@portkey/did-ui-react';
-import { OperationTypeEnum } from 'types/index';
 import useReCaptchaModal from './useReCaptchaModal';
 
 const useVerifier = () => {
@@ -31,6 +30,7 @@ const useVerifier = () => {
       verifier,
       chainId,
       operationType,
+      operationDetails,
     }: {
       guardianIdentifier: string;
       accountType: AccountType;
@@ -38,6 +38,7 @@ const useVerifier = () => {
       verifier: IVerifier;
       chainId: ChainId;
       operationType: OperationTypeEnum;
+      operationDetails: string;
     }) => {
       let accessToken;
       let clientId;
@@ -55,6 +56,10 @@ const useVerifier = () => {
           clientId = socialLogin?.Google?.clientId;
           customLoginHandler = socialLogin?.Google?.customLoginHandler;
           break;
+        case 'Telegram':
+          accessToken = token;
+          customLoginHandler = socialLogin?.Telegram?.customLoginHandler;
+          break;
         default:
           throw 'accountType is not supported';
       }
@@ -67,6 +72,7 @@ const useVerifier = () => {
         clientId: clientId ?? '',
         redirectURI,
         operationType,
+        operationDetails,
         customLoginHandler,
       });
     },

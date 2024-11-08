@@ -1,4 +1,3 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -29,6 +28,15 @@ input[type='number'] {
 .email-input-wrapper .login-input.portkey-ant-input,
 .phone-number-input-wrapper .phone-number-input-content .portkey-ant-input {
   font-size: 16Px !important;
+}
+
+.portkey-ui-segmented-phone > .login-btn {
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.portkey-ui-web2design-switch-sign.portkey-ui-web2design-switch-sign-sign-up {
+  margin-top: 0 !important;
 }
 
 .portkey-ui-receive-content {

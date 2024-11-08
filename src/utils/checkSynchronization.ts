@@ -5,7 +5,6 @@ const checkSynchronization = async (message: string) => {
   const { info } = store.getState();
   if (info.walletType === 'discover' && message.includes('Pre-Error: Transaction fee not enough.')) {
     try {
-      // const rst = await ContractRequest.get().getHolder(info.walletInfo?.discoverInfo?.address || '');
       const rst = await ContractRequest.get().getSyncChainStatus();
       return rst;
     } catch (error) {

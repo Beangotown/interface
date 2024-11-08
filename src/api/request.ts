@@ -8,6 +8,7 @@ import {
   INoticeModalResponse,
   IBeanPassListItem,
   ISetCurBeanBody,
+  IErrorResponse,
 } from 'types';
 import request, { cmsRequest } from './axios';
 import {
@@ -17,7 +18,9 @@ import {
   IWeeklyRankResult,
 } from 'components/Leaderboard/data/types';
 
-export const getBeanPassClaimClaimable = async (query: IBeanPassClaimReq): Promise<IBeanPassClaimRes> => {
+export const getBeanPassClaimClaimable = async (
+  query: IBeanPassClaimReq,
+): Promise<IBeanPassClaimRes & IErrorResponse> => {
   return request.get('app/bean-pass/claimable', { params: query });
 };
 

@@ -1,9 +1,9 @@
 'use client';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from 'components/Header';
 import { Layout as AntdLayout } from 'antd';
 
-import 'utils/firebase';
+// import 'utils/firebase';
 
 import dynamic from 'next/dynamic';
 
@@ -11,12 +11,13 @@ import { store } from 'redux/store';
 import { setIsMobile, setLoginStatus } from 'redux/reducer/info';
 import isMobile from 'utils/isMobile';
 import { Store } from 'utils/store';
-import { ConfigProvider, did } from '@portkey/did-ui-react';
+import { handleSDKLogout } from 'utils/handleLogout';
+import { ConfigProvider, TelegramPlatform, did } from '@portkey/did-ui-react';
 
 import { useRouter, usePathname } from 'next/navigation';
 
 import useGetState from 'redux/state/useGetState';
-import { KEY_NAME } from 'constants/platform';
+import { KEY_NAME, TELEGRAM_BOT_ID } from 'constants/platform';
 import { LoginStatus } from 'redux/types/reducerTypes';
 import { fetchChessboardConfig, fetchChessboardData, fetchConfigItems, fetchNoticeModal } from 'api/request';
 import { setConfigInfo } from 'redux/reducer/configInfo';
@@ -44,6 +45,39 @@ const Layout = dynamic(
       const [isFetchFinished, setIsFetchFinished] = useState(false);
 
       const router = useRouter();
+
+      useEffect(() => {
+        TelegramPlatform.initializeTelegramWebApp({ handleLogout: handleSDKLogout });
+      }, []);
+
+      useEffect(() => {
+        if (!window || !document) return;
+        const docEle = document.documentElement;
+        const event = 'onorientationchange' in window ? 'orientationchange' : 'resize';
+        const fn = function () {
+          const isMobile =
+            TelegramPlatform.isTelegramPlatform() ||
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+          const width = docEle.clientWidth;
+          const unitWidth = isMobile ? 390 : 1920;
+          if (width) {
+            if (isMobile && width > 580) {
+              docEle.style.fontSize = '16px';
+            } else if (!isMobile && width < 1200) {
+              docEle.style.fontSize = '10px';
+            } else {
+              docEle.style.fontSize = 16 * (width / unitWidth) + 'px';
+            }
+          }
+        };
+        fn();
+        window.addEventListener(event, fn, false);
+        document.addEventListener('DOMContentLoaded', fn, false);
+        return () => {
+          window.removeEventListener(event, fn, false);
+          document.removeEventListener('DOMContentLoaded', fn, false);
+        };
+      }, []);
 
       useEffect(() => {
         if (!isLogin) {
@@ -90,6 +124,11 @@ const Layout = dynamic(
               },
               serviceUrl: res.data.portkeyServiceUrl,
               graphQLUrl: res.data.graphqlServer,
+              socialLogin: {
+                Telegram: {
+                  botId: TELEGRAM_BOT_ID,
+                },
+              },
             });
           });
 
@@ -117,7 +156,11 @@ const Layout = dynamic(
           const ua = navigator.userAgent;
           const mobileType = isMobile(ua);
           const isMobileDevice =
-            mobileType.apple.phone || mobileType.android.phone || mobileType.apple.tablet || mobileType.android.tablet;
+            mobileType.apple.phone ||
+            mobileType.android.phone ||
+            mobileType.apple.tablet ||
+            mobileType.android.tablet ||
+            TelegramPlatform.isTelegramPlatform();
           setIsMobileDevice(isMobileDevice);
           store.dispatch(setIsMobile(isMobileDevice));
         };

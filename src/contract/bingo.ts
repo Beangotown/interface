@@ -1,4 +1,11 @@
-import { IBoutInformation, IContractError, IGameSetting, IPlayerInformation, IPlayerProps } from 'types';
+import {
+  IBoutInformation,
+  IContractError,
+  IGameSetting,
+  IPlayerInformation,
+  IPlayerProps,
+  ITransactionResult,
+} from 'types';
 import contractRequest from './contractRequest';
 import { formatErrorMsg } from 'utils/formattError';
 import { store } from 'redux/store';
@@ -16,7 +23,7 @@ export enum ContractMethodType {
 
 const bingoContract = async <T, R>(methodName: string, params: T, type: ContractMethodType) => {
   const contract = contractRequest.get();
-  const contractAddress = configInfo.configInfo!.bingoContractAddress;
+  const contractAddress = configInfo.configInfo!.beanGoTownContractAddress;
   const method = type === ContractMethodType.SEND ? 'callSendMethod' : 'callViewMethod';
   try {
     const res = await contract[method]({
@@ -45,7 +52,7 @@ export const GetGameLimitSettings = async (): Promise<IGameSetting> => {
   return await bingoContract('GetGameLimitSettings', null, ContractMethodType.VIEW);
 };
 
-export const GetBoutInformation = async (playId: string, count = 2): Promise<IBoutInformation> => {
+export const GetBoutInformation = async (playId: string, count = 2): Promise<IBoutInformation | undefined> => {
   try {
     const res: IBoutInformation = await bingoContract(
       'GetBoutInformation',
@@ -72,9 +79,9 @@ export const GetBoutInformation = async (playId: string, count = 2): Promise<IBo
 export const Play = async ({
   resetStart,
   diceCount,
-}: IPlayerProps): Promise<{ TransactionId: string; TxResult: any }> => {
+}: IPlayerProps): Promise<{ TransactionId: string; TxResult: ITransactionResult }> => {
   const contract = contractRequest.get();
-  const contractAddress = configInfo.configInfo!.bingoContractAddress;
+  const contractAddress = configInfo.configInfo!.beanGoTownContractAddress;
 
   try {
     const { transactionId, chainId, rpcUrl } = await contract.callSendMethodNoResult({

@@ -6,7 +6,6 @@ import { IPortkeyProvider } from '@portkey/provider-types';
 import detectProvider from '@portkey/detect-provider';
 import {
   selectInfo,
-  setAccountInfoSync,
   setGameSetting,
   setIsNeedSyncAccountInfo,
   setLoginStatus,
@@ -25,7 +24,6 @@ import ContractRequest from 'contract/contractRequest';
 import { GetGameLimitSettings, GetPlayerInformation } from 'contract/bingo';
 import useGetState from 'redux/state/useGetState';
 import DetectProvider from 'utils/InstanceProvider';
-import useIntervalAsync from './useInterValAsync';
 import InstanceProvider from 'utils/InstanceProvider';
 import showMessage from 'utils/setGlobalComponentsInfo';
 import { ChainId } from '@portkey/provider-types';
@@ -33,8 +31,8 @@ import { useRouter } from 'next/navigation';
 import { NetworkType } from 'constants/index';
 import { sleep } from 'utils/common';
 import { getSyncHolder, trackLoginInfo } from 'utils/trackAddressInfo';
-
-const KEY_NAME = 'BEANGOTOWN';
+import discoverUtils from 'utils/discoverUtils';
+import { KEY_NAME } from 'constants/platform';
 
 export type DiscoverDetectState = 'unknown' | 'detected' | 'not-detected';
 
@@ -171,25 +169,17 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     store.dispatch(setLoginStatus(LoginStatus.UNLOGIN));
     store.dispatch(setWalletType(WalletType.unknown));
     store.dispatch(setPlayerInfo(null));
-    window.localStorage.removeItem(LOGIN_EARGLY_KEY);
+    discoverUtils.removeDiscoverStorageSign();
     router.push('/login');
   }, [router]);
 
-  const checkProviderConnected = useCallback(async () => {
-    if (walletType !== WalletType.discover) {
-      return;
-    }
-    const detectInfo = await detect();
-    if (!detectInfo) return;
-
-    detectInfo.on('disconnected', () => {
-      logout();
-    });
-  }, [detect, logout, walletType]);
-
   useEffect(() => {
-    checkProviderConnected();
-  }, [checkProviderConnected, detect]);
+    if (walletType === WalletType.discover && discoverProvider) {
+      discoverProvider.on('disconnected', () => {
+        logout();
+      });
+    }
+  }, [discoverProvider, walletType]);
 
   useEffect(() => {
     setIsLogin(loginStatus === LoginStatus.LOGGED);
@@ -200,7 +190,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       openPageInDiscover();
       return;
     }
-    if (!window?.portkey && !isMobileDevices()) {
+    if (!window?.Portkey && !isMobileDevices()) {
       window?.open(portKeyExtensionUrl, '_blank')?.focus();
       return;
     }
@@ -211,6 +201,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       return;
     }
     const network = await provider?.request({ method: 'network' });
+    console.log(network);
     if (network !== Network) {
       console.log(configInfo);
       if (Network === NetworkType.MAIN) {
@@ -234,27 +225,32 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     }
   }, []);
 
-  const handleGoogle = async () => {
+  const handleThirdPart = async (type: SocialLoginType) => {
+    discoverUtils.removeDiscoverStorageSign();
     setLoading(true);
-    const res = await getSocialToken({ type: SocialLoginType.GOOGLE });
+    const res = await getSocialToken({ type });
     await signHandle.onSocialFinish({
       type: res.provider,
       data: { accessToken: res.token },
     });
   };
 
-  const handleApple = async () => {
-    setLoading(true);
-    const res = await getSocialToken({ type: SocialLoginType.APPLE });
-    await signHandle.onSocialFinish({
-      type: res.provider,
-      data: { accessToken: res.token },
-    });
+  const handleGoogle = async () => {
+    handleThirdPart(SocialLoginType.GOOGLE);
+  };
+
+  const handleTeleGram = () => {
+    handleThirdPart(SocialLoginType.TELEGRAM);
+  };
+
+  const handleApple = () => {
+    handleThirdPart(SocialLoginType.APPLE);
   };
 
   const getSocialToken = async ({ type }: { type: SocialLoginType; clientId?: string; redirectURI?: string }) => {
     const tokenRes = await socialLoginAuth({
       type,
+      network: Network as NetworkType,
     });
     return tokenRes;
   };
@@ -278,7 +274,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       chainId: curChain,
       rpcUrl: configInfo.configInfo?.rpcUrl,
       discoverRpcUrl: configInfo.configInfo?.discoverRpcUrl,
-      contractAddress: configInfo!.configInfo!.bingoContractAddress,
+      contractAddress: configInfo!.configInfo!.beanGoTownContractAddress,
     };
     contract.setWallet(walletInfo, walletType);
     contract.setConfig(config);
@@ -327,61 +323,66 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     handleFinish(WalletType.discover, discoverInfo);
   }, []);
 
-  const handleFinish = async (type: WalletType, walletInfo: PortkeyInfoType | IDiscoverInfo) => {
-    console.log('wallet', type, walletInfo);
+  const handleFinish = useCallback(
+    async (type: WalletType, walletInfo: PortkeyInfoType | IDiscoverInfo) => {
+      console.log('wallet', type, walletInfo);
 
-    if (type === WalletType.discover) {
-      store.dispatch(setWalletType(type));
-      localStorage.setItem(LOGIN_EARGLY_KEY, 'true');
-      setDiscoverInfo(walletInfo);
-      setWallet({ discoverInfo: walletInfo as IDiscoverInfo });
-      setCurWalletType(type);
-      store.dispatch(
-        setWalletInfo({
-          discoverInfo: walletInfo,
-        }),
-      );
-      InstanceProvider.setWalletInfoInstance({
-        discoverInfo: walletInfo,
-      });
-      trackLoginInfo({
-        caAddress: (walletInfo as IDiscoverInfo).address!,
-        caHash: '',
-      });
-      store.dispatch(setLoginStatus(LoginStatus.LOGGED));
-    } else if (type === WalletType.portkey) {
-      did.save((walletInfo as PortkeyInfoType)?.pin || '', KEY_NAME);
-      setDidWalletInfo(walletInfo as PortkeyInfoType);
-      setWallet({
-        portkeyInfo: walletInfo as PortkeyInfoType,
-      });
-      setCurWalletType(type);
-      store.dispatch(setWalletType(WalletType.portkey));
-      if ((walletInfo as PortkeyInfoType).chainId !== curChain) {
-        InstanceProvider.setWalletInfoInstance({
-          portkeyInfo: walletInfo as PortkeyInfoType,
-        });
-        const holder = await getSyncHolder(curChain, walletInfo as DIDWalletInfo);
-        trackLoginInfo({ caAddress: holder.caAddress, caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash });
-      } else {
+      if (type === WalletType.discover) {
+        store.dispatch(setWalletType(type));
+        localStorage.setItem(LOGIN_EARGLY_KEY, 'true');
+        setDiscoverInfo(walletInfo);
+        setWallet({ discoverInfo: walletInfo as IDiscoverInfo });
+        setCurWalletType(type);
         store.dispatch(
           setWalletInfo({
-            portkeyInfo: walletInfo,
+            discoverInfo: walletInfo,
           }),
         );
-        trackLoginInfo({
-          caAddress: (walletInfo as PortkeyInfoType)!.caInfo!.caAddress,
-          caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash,
+        InstanceProvider.setWalletInfoInstance({
+          discoverInfo: walletInfo,
         });
+        trackLoginInfo({
+          caAddress: (walletInfo as IDiscoverInfo).address!,
+          caHash: '',
+        });
+        store.dispatch(setLoginStatus(LoginStatus.LOGGED));
+      } else if (type === WalletType.portkey) {
+        did.save((walletInfo as PortkeyInfoType)?.pin || '', KEY_NAME);
+        setDidWalletInfo(walletInfo as PortkeyInfoType);
+        setWallet({
+          portkeyInfo: walletInfo as PortkeyInfoType,
+        });
+        setCurWalletType(type);
+        store.dispatch(setWalletType(WalletType.portkey));
+        if ((walletInfo as PortkeyInfoType).chainId !== curChain) {
+          InstanceProvider.setWalletInfoInstance({
+            portkeyInfo: walletInfo as PortkeyInfoType,
+          });
+          const holder = await getSyncHolder(curChain, walletInfo as DIDWalletInfo);
+          trackLoginInfo({ caAddress: holder.caAddress, caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash });
+        } else {
+          store.dispatch(
+            setWalletInfo({
+              portkeyInfo: walletInfo,
+            }),
+          );
+          trackLoginInfo({
+            caAddress: (walletInfo as PortkeyInfoType)!.caInfo!.caAddress,
+            caHash: (walletInfo as PortkeyInfoType)!.caInfo!.caHash,
+          });
+        }
+        store.dispatch(setLoginStatus(LoginStatus.LOGGED));
       }
-      store.dispatch(setLoginStatus(LoginStatus.LOGGED));
-    }
-  };
+    },
+    [curChain],
+  );
 
   const loginEagerly = useCallback(async () => {
+    const provider = await detect();
+    const isConnected = provider.isConnected();
+    if (!isConnected) return;
     setLoading(true);
     try {
-      const provider = await detect();
       const network = await provider.request({ method: 'network' });
       if (network !== Network) {
         console.log('ERR_CODE.NETWORK_TYPE_NOT_MATCH');
@@ -405,7 +406,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
       });
       setLoading(false);
     }
-  }, [onAccountsSuccess]);
+  }, [Network, curChain, onAccountsSuccess]);
 
   const getDiscoverSignature = useCallback(
     async (params: SignatureParams) => {
@@ -470,6 +471,7 @@ export default function useWebLogin({ signHandle }: { signHandle?: any }) {
     loginEagerly,
     handlePortKey,
     handleGoogle,
+    handleTeleGram,
     handleApple,
     handleFinish,
     initializeContract,

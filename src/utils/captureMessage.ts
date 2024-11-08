@@ -36,16 +36,16 @@ interface ICaptureMessageProps<T, R> {
 }
 
 const getErrorText = <T, R>(type: SentryMessageType, params: IParams<T, R>) => {
-  const { name, method, query, description, walletAddress } = params;
+  const { name, query, description, walletAddress } = params;
   let errorText = '';
   switch (type) {
     case SentryMessageType.INFO:
-      errorText = `info: ${name} method:${method} ${description} ${walletAddress}`;
+      errorText = `info: ${name}, ${walletAddress}, ${JSON.stringify(description)}`;
       break;
     default:
-      errorText = `error: ${name} method:${method} fail, query: ${JSON.stringify(query)}, error:${JSON.stringify(
+      errorText = `error info: ${name}, ${walletAddress}, query: ${JSON.stringify(query)}, error:${JSON.stringify(
         description,
-      )} ${walletAddress}`;
+      )}`;
       break;
   }
   return errorText;
@@ -53,8 +53,12 @@ const getErrorText = <T, R>(type: SentryMessageType, params: IParams<T, R>) => {
 
 export const captureMessage = <T, R>({ type, params, level }: ICaptureMessageProps<T, R>) => {
   const errorText = getErrorText(type, params);
+  console.error('captureMessage query:', JSON.stringify(params.query));
+  console.error('captureMessage description:', JSON.stringify(params.description));
   Sentry.captureMessage(errorText, {
     tags: {
+      name: params.name,
+      method: params.method,
       walletAddress: params.walletAddress,
       contractAddress: params.contractAddress,
       type: type,

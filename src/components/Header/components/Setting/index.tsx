@@ -18,7 +18,7 @@ import {
 import { LoginStatus } from 'redux/types/reducerTypes';
 import useGetState from 'redux/state/useGetState';
 import { WalletType } from 'types/index';
-import { did } from '@portkey/did-ui-react';
+import { did, TelegramPlatform } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import ContractRequest from 'contract/contractRequest';
 import { setChessboardResetStart, setChessboardTotalStep, setCurChessboardNode } from 'redux/reducer/chessboardData';
@@ -85,7 +85,10 @@ export default function Setting() {
     window.localStorage.removeItem(PORTKEY_LOGIN_CHAIN_ID_KEY);
     ContractRequest.get().resetConfig();
     showMessage.hideLoading();
-
+    if (TelegramPlatform.isTelegramPlatform()) {
+      TelegramPlatform.close();
+      return;
+    }
     router.push('/login');
   };
   return (
@@ -106,7 +109,7 @@ export default function Setting() {
             title="Game Records"
             onClick={handleRecord}
             className={`${isMobile ? styles.buttonMobile : styles.button} mb-4 mb-[24.5px]`}></CommonBtn>
-          {walletType !== WalletType.discover && (
+          {walletType !== WalletType.discover && !TelegramPlatform.isTelegramPlatform() && (
             <CommonBtn
               title="Lock"
               onClick={handleLock}

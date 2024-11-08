@@ -1,3 +1,5 @@
+import { TelegramPlatform } from '@portkey/did-ui-react';
+
 const appleIphone = /iPhone/i;
 const appleIpod = /iPod/i;
 const appleTablet = /iPad/i;
@@ -178,5 +180,5 @@ export default function isMobile(param?: IsMobileParameter): isMobileResult {
 
 export function isMobileDevices() {
   const isM = isMobile();
-  return isM.apple.device || isM.android.device;
+  return isM.apple.device || isM.android.device || TelegramPlatform.isTelegramPlatform();
 }
