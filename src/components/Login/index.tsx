@@ -223,7 +223,7 @@ export default function Login() {
 
   const renderLoginMethods = (inModel: boolean) => {
     const allMethods = [
-      { name: 'Login with Portkey', onclick: handlePortKey, iconName: 'portkey' },
+      // { name: 'Login with Portkey', onclick: handlePortKey, iconName: 'portkey' },
       {
         name: 'Login with Google',
         onclick: handleGoogle,
